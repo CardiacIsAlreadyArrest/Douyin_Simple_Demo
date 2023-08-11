@@ -30,5 +30,4 @@ func GeneratedRegister(r *server.Hertz) {
 
 	comment.Register(r)
 
-	api.Register(r)
 }

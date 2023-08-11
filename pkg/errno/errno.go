@@ -29,7 +29,7 @@ const (
 )
 
 type ErrNo struct {
-  ErrCode int32
+  ErrCode int64
   ErrMsg  string
 }
 
@@ -37,7 +37,7 @@ func (e ErrNo) Error() string {
   return fmt.Sprintf("err_code=%d, err_msg=%s", e.ErrCode, e.ErrMsg)
 }
 
-func NewErrNo(code int32, msg string) ErrNo {
+func NewErrNo(code int64, msg string) ErrNo {
   return ErrNo{code, msg}
 }
 

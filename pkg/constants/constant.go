@@ -22,9 +22,11 @@ const (
 	IdentityKey = "id"
 
 	UserServiceName = "user"
+
+	CPURateLimit float64 = 80.0
 )
 
 var (
-	MySQLDefaultDSN = "gorm:gorm@tcp(localhost:3306)/gorm?charset=utf8&parseTime=True&loc=Local"
+	MySQLDefaultDSN = "gorm:gorm@tcp(localhost:3306)/test_douyin?charset=utf8&parseTime=True&loc=Local"
 	EtcdAddress     = "localhost:2379"
 )

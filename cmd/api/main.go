@@ -3,10 +3,16 @@
 package main
 
 import (
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/rpc"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
+func Init() {
+	rpc.InitRPC()
+}
+
 func main() {
+	Init()
 	h := server.Default()
 
 	register(h)

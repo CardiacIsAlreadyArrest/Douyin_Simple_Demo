@@ -3,7 +3,7 @@
 package relation
 
 import (
-	relation "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/relation"
+	//relation "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/relation"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

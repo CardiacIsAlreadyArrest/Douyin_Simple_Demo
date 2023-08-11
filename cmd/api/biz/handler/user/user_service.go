@@ -3,14 +3,37 @@
 package user
 
 import (
-  "context"
-  "github.com/cloudwego/hertz/pkg/app"
+	"context"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/rpc"
+	"github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/user"
+	"github.com/Yra-A/Douyin_Simple_Demo/pkg/errno"
+	"github.com/cloudwego/hertz/pkg/app"
 )
 
 // UserRegister .
 // @router /douyin/user/register/ [POST]
 func UserRegister(ctx context.Context, c *app.RequestContext) {
+	var req user.UserRegisterRequest
 
+	if err := c.BindAndValidate(&req); err != nil {
+		handler.SendResponse(c, errno.ConvertErr(err), nil)
+		return
+	}
+
+	if len(req.Username) == 0 || len(req.Password) == 0 {
+		handler.SendResponse(c, errno.ParamErr, nil)
+		return
+	}
+
+	if err := rpc.UserRegister(context.Background(), &user.UserRegisterRequest{
+		Username: req.Username,
+		Password: req.Password,
+	}); err != nil {
+		handler.SendResponse(c, errno.ConvertErr(err), nil)
+		return
+	}
+	handler.SendResponse(c, errno.Success, nil)
 }
 
 // UserLogin .
@@ -19,7 +42,7 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 
 }
 
-// UserLogin .
+// UserInfo .
 // @router /douyin/user/ [GET]
 func UserInfo(ctx context.Context, c *app.RequestContext) {
 
