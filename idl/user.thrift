@@ -1,8 +1,8 @@
 namespace go user
 
 struct UserRegisterRequest {
-    1: string username,              // 注册用户名，最长32个字符
-    2: string password               // 密码，最长32个字符
+    1: string username (api.query="username")              // 注册用户名，最长32个字符
+    2: string password (api.query="password")              // 密码，最长32个字符
 }
 
 struct UserRegisterResponse {
@@ -13,8 +13,8 @@ struct UserRegisterResponse {
 }
 
 struct UserLoginRequest {
-    1: string username,              // 登录用户名
-    2: string password               // 登录密码
+    1: string username (api.query="username")              // 登录用户名
+    2: string password (api.query="password")              // 登录密码
 }
 
 struct UserLoginResponse {
@@ -25,8 +25,8 @@ struct UserLoginResponse {
 }
 
 struct UserInfoRequest {
-    1: i64 user_id,                  // 用户id
-    2: string token                  // 用户鉴权token
+    1: i64 user_id (api.query="user_id")                  // 用户id
+    2: string token (api.query="token")                   // 用户鉴权token
 }
 
 struct UserInfoResponse {
@@ -51,9 +51,9 @@ struct User {
 
 service UserService {
     // 用户注册操作
-    UserRegisterResponse UserRegister(1: UserRegisterRequest req)
+    UserRegisterResponse UserRegister(1: UserRegisterRequest req) (api.post="/douyin/user/register/")
     // 用户登录操作
-    UserLoginResponse UserLogin(1: UserLoginRequest req)
+    UserLoginResponse UserLogin(1: UserLoginRequest req) (api.post="/douyin/user/login/")
     // 获取用户信息
-    UserInfoResponse UserInfo(1: UserInfoRequest req)
+    UserInfoResponse UserInfo(1: UserInfoRequest req) (api.get="/douyin/user/")
 }

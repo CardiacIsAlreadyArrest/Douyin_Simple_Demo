@@ -10,9 +10,9 @@ import (
 
 type UserRegisterRequest struct {
 	// 注册用户名，最长32个字符
-	Username string `thrift:"username,1" form:"username" json:"username" query:"username"`
+	Username string `thrift:"username,1" json:"username" query:"username"`
 	// 密码，最长32个字符
-	Password string `thrift:"password,2" form:"password" json:"password" query:"password"`
+	Password string `thrift:"password,2" json:"password" query:"password"`
 }
 
 func NewUserRegisterRequest() *UserRegisterRequest {
@@ -485,9 +485,9 @@ func (p *UserRegisterResponse) String() string {
 
 type UserLoginRequest struct {
 	// 登录用户名
-	Username string `thrift:"username,1" form:"username" json:"username" query:"username"`
+	Username string `thrift:"username,1" json:"username" query:"username"`
 	// 登录密码
-	Password string `thrift:"password,2" form:"password" json:"password" query:"password"`
+	Password string `thrift:"password,2" json:"password" query:"password"`
 }
 
 func NewUserLoginRequest() *UserLoginRequest {
@@ -960,9 +960,9 @@ func (p *UserLoginResponse) String() string {
 
 type UserInfoRequest struct {
 	// 用户id
-	UserID int64 `thrift:"user_id,1" form:"user_id" json:"user_id" query:"user_id"`
+	UserID int64 `thrift:"user_id,1" json:"user_id" query:"user_id"`
 	// 用户鉴权token
-	Token string `thrift:"token,2" form:"token" json:"token" query:"token"`
+	Token string `thrift:"token,2" json:"token" query:"token"`
 }
 
 func NewUserInfoRequest() *UserInfoRequest {

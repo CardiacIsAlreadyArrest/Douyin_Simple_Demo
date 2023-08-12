@@ -5,16 +5,27 @@ package main
 import (
 	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/rpc"
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
+	"github.com/hertz-contrib/logger/accesslog"
+	hertzlogrus "github.com/hertz-contrib/logger/logrus"
+	"github.com/hertz-contrib/obs-opentelemetry/tracing"
 )
 
 func Init() {
-	rpc.InitRPC()
+  rpc.InitRPC()
+  logger := hertzlogrus.NewLogger()
+  hlog.SetLogger(logger)
+  hlog.SetLevel(hlog.LevelInfo)
 }
 
 func main() {
-	Init()
-	h := server.Default()
-
-	register(h)
-	h.Spin()
+  Init()
+  tracer, cfg := tracing.NewServerTracer()
+  h := server.New(
+    tracer,
+  )
+  h.Use(accesslog.New(accesslog.WithFormat("[${time}] ${status} - ${latency} ${method} ${path} ${queryParams} - 【req body: ${body}】【req query parameter: ${queryParams}】【response body: ${resBody}】")))
+  register(h)
+  h.Use(tracing.ServerMiddleware(cfg))
+  h.Spin()
 }

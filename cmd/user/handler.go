@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/Yra-A/Douyin_Simple_Demo/cmd/user/service"
 	user "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/user"
 	"github.com/Yra-A/Douyin_Simple_Demo/pkg/errno"
+	"github.com/cloudwego/kitex/pkg/klog"
 )
 
 // UserServiceImpl implements the last service interface defined in the IDL.
@@ -12,8 +14,10 @@ type UserServiceImpl struct{}
 
 // UserRegister implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.UserRegisterRequest) (resp *user.UserRegisterResponse, err error) {
+	klog.CtxDebugf(ctx, "UserRegister called: %s", req.GetUsername()+" "+req.GetPassword())
 	resp = new(user.UserRegisterResponse)
 	if len(req.Username) == 0 || len(req.Password) == 0 {
+		fmt.Println(req.Username, req.Password, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!rpcserver")
 		resp = &user.UserRegisterResponse{
 			StatusCode: errno.ParamErrCode,
 			StatusMsg:  &errno.ParamErr.ErrMsg,
@@ -22,9 +26,10 @@ func (s *UserServiceImpl) UserRegister(ctx context.Context, req *user.UserRegist
 	}
 	err = service.NewCreateUserService(ctx).CreateUser(req)
 	if err != nil {
+		ErrMsg := err.Error()
 		resp = &user.UserRegisterResponse{
-			StatusCode: errno.ParamErrCode,
-			StatusMsg:  &errno.ParamErr.ErrMsg,
+			StatusCode: errno.FalseCode,
+			StatusMsg:  &ErrMsg,
 		}
 		return resp, nil
 	}

@@ -3,7 +3,6 @@
 package feed
 
 import (
-	//feed "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/feed"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

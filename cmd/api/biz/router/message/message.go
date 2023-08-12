@@ -3,7 +3,6 @@
 package message
 
 import (
-	//message "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/message"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

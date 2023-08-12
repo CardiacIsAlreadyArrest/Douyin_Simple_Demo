@@ -5,8 +5,9 @@ package user
 import (
 	"context"
 	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler"
+	huser "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/model/user"
 	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/rpc"
-	"github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/user"
+	kuser "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/user"
 	"github.com/Yra-A/Douyin_Simple_Demo/pkg/errno"
 	"github.com/cloudwego/hertz/pkg/app"
 )
@@ -14,19 +15,16 @@ import (
 // UserRegister .
 // @router /douyin/user/register/ [POST]
 func UserRegister(ctx context.Context, c *app.RequestContext) {
-	var req user.UserRegisterRequest
-
+	var req huser.UserRegisterRequest
 	if err := c.BindAndValidate(&req); err != nil {
 		handler.SendResponse(c, errno.ConvertErr(err), nil)
 		return
 	}
-
 	if len(req.Username) == 0 || len(req.Password) == 0 {
 		handler.SendResponse(c, errno.ParamErr, nil)
 		return
 	}
-
-	if err := rpc.UserRegister(context.Background(), &user.UserRegisterRequest{
+	if err := rpc.UserRegister(context.Background(), &kuser.UserRegisterRequest{
 		Username: req.Username,
 		Password: req.Password,
 	}); err != nil {

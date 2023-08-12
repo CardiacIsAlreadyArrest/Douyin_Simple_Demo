@@ -3,19 +3,11 @@
 package main
 
 import (
-  handler "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler"
-  handler_user "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/user"
-  "github.com/cloudwego/hertz/pkg/app/server"
+	handler "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler"
+	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
 // customizeRegister registers customize routers.
 func customizedRegister(r *server.Hertz) {
-  r.GET("/ping", handler.Ping)
-
-  // your code ...
-  router := r.Group("/douyin")
-
-  // user
-  user := router.Group("/user")
-  user.POST("/register", handler_user.UserRegister)
+	r.GET("/ping", handler.Ping)
 }

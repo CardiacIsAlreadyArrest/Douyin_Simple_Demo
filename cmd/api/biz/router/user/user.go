@@ -3,7 +3,8 @@
 package user
 
 import (
-	//user "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/user"
+	"fmt"
+	user "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/user"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -15,5 +16,21 @@ import (
 
 // Register register routes based on the IDL 'api.${HTTP Method}' annotation.
 func Register(r *server.Hertz) {
-
+	fmt.Println("user router start registering---------------------------")
+	root := r.Group("/", rootMw()...)
+	{
+		_douyin := root.Group("/douyin", _douyinMw()...)
+		{
+			_user := _douyin.Group("/user", _userMw()...)
+			_user.GET("/", append(_userinfoMw(), user.UserInfo)...)
+			{
+				_login := _user.Group("/login", _loginMw()...)
+				_login.POST("/", append(_userloginMw(), user.UserLogin)...)
+			}
+			{
+				_register := _user.Group("/register", _registerMw()...)
+				_register.POST("/", append(_userregisterMw(), user.UserRegister)...)
+			}
+		}
+	}
 }
