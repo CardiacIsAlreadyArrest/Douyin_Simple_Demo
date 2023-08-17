@@ -56,13 +56,37 @@ func initUserRpc() {
 }
 
 // UserRegister 用户注册【rpc 客户端】
-func UserRegister(ctx context.Context, req *user.UserRegisterRequest) error {
+func UserRegister(ctx context.Context, req *user.UserRegisterRequest) (*user.UserRegisterResponse, error) {
 	resp, err := userClient.UserRegister(ctx, req)
 	if err != nil {
-		return err
+		return resp, err
 	}
 	if resp.StatusCode != 0 {
-		return errno.NewErrNo(int64(resp.StatusCode), *resp.StatusMsg)
+		return resp, errno.NewErrNo(int64(resp.StatusCode), *resp.StatusMsg)
 	}
-	return nil
+	return resp, nil
+}
+
+// UserLogin 用户登录【rpc 客户端】
+func UserLogin(ctx context.Context, req *user.UserLoginRequest) (*user.UserLoginResponse, error) {
+	resp, err := userClient.UserLogin(ctx, req)
+	if err != nil {
+		return resp, err
+	}
+	if resp.StatusCode != 0 {
+		return resp, errno.NewErrNo(int64(resp.StatusCode), *resp.StatusMsg)
+	}
+	return resp, nil
+}
+
+// UserInfo 用户信息【rpc 客户端】
+func UserInfo(ctx context.Context, req *user.UserInfoRequest) (*user.UserInfoResponse, error) {
+	resp, err := userClient.UserInfo(ctx, req)
+	if err != nil {
+		return resp, err
+	}
+	if resp.StatusCode != 0 {
+		return resp, errno.NewErrNo(int64(resp.StatusCode), *resp.StatusMsg)
+	}
+	return resp, nil
 }

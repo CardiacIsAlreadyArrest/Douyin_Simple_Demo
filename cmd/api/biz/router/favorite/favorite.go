@@ -3,6 +3,7 @@
 package favorite
 
 import (
+	//favorite "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/favorite"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
