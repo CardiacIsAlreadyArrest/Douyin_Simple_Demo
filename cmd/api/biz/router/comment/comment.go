@@ -3,6 +3,7 @@
 package comment
 
 import (
+	//comment "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/comment"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 

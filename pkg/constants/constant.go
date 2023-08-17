@@ -19,7 +19,7 @@ const (
 	UserTableName = "user"
 
 	SecretKey   = "secret key"
-	IdentityKey = "id"
+	IdentityKey = "user id"
 
 	UserServiceName = "user"
 
