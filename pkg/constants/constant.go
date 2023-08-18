@@ -32,9 +32,12 @@ const (
 	SecretKey   = "secret key"
 	IdentityKey = "user id"
 
-	UserServiceName = "user"
+	UserServiceName    = "user"
+	PublishServiceName = "publish"
 
 	CPURateLimit float64 = 80.0
+
+	MaxVideoSize int64 = 128 * 1024 * 1024 // 可上传的单个视频大小最大为 128 MB
 )
 
 var (

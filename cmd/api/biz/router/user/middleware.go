@@ -2,7 +2,10 @@
 
 package user
 
-import "github.com/cloudwego/hertz/pkg/app"
+import (
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/mw/jwt"
+	"github.com/cloudwego/hertz/pkg/app"
+)
 
 func rootMw() []app.HandlerFunc {
 	// your code...
@@ -16,7 +19,9 @@ func _douyinMw() []app.HandlerFunc {
 
 func _userinfoMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
 }
 
 func _userMw() []app.HandlerFunc {

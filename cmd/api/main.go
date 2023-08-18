@@ -27,7 +27,7 @@ func minioReverseProxy(c context.Context, ctx *app.RequestContext) {
 func Init() {
 	rpc.InitRPC()
 	jwt.InitJwt()
-	minio.Init()
+	minio.Init() // minio init
 	logger := hertzlogrus.NewLogger()
 	hlog.SetLogger(logger)
 	hlog.SetLevel(hlog.LevelInfo)

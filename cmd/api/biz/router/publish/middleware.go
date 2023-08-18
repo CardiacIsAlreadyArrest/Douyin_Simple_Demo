@@ -2,7 +2,10 @@
 
 package publish
 
-import "github.com/cloudwego/hertz/pkg/app"
+import (
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/mw/jwt"
+	"github.com/cloudwego/hertz/pkg/app"
+)
 
 func rootMw() []app.HandlerFunc {
 	// your code...
@@ -26,7 +29,9 @@ func _actionMw() []app.HandlerFunc {
 
 func _publishactionMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
 }
 
 func _listMw() []app.HandlerFunc {
@@ -36,5 +41,7 @@ func _listMw() []app.HandlerFunc {
 
 func _publishlistMw() []app.HandlerFunc {
 	// your code...
-	return nil
+	return []app.HandlerFunc{
+		jwt.JwtMiddleware.MiddlewareFunc(),
+	}
 }

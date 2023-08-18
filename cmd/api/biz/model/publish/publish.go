@@ -10,11 +10,11 @@ import (
 
 type PublishActionRequest struct {
 	// 用户鉴权token
-	Token string `thrift:"token,1" json:"token" query:"token"`
+	Token string `thrift:"token,1" form:"token" json:"token"`
 	// 视频数据
-	Data []byte `thrift:"data,2" json:"data" query:"data"`
+	Data []byte `thrift:"data,2" form:"data" json:"data"`
 	// 视频标题
-	Title string `thrift:"title,3" json:"title" query:"title"`
+	Title string `thrift:"title,3" form:"title" json:"title"`
 }
 
 func NewPublishActionRequest() *PublishActionRequest {
