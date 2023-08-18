@@ -18,6 +18,7 @@ package jwt
 
 import (
 	"context"
+	"fmt"
 	huser "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/model/user"
 	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/rpc"
 	kuser "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/user"
@@ -25,7 +26,6 @@ import (
 	"github.com/Yra-A/Douyin_Simple_Demo/pkg/errno"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
-	jwtv4 "github.com/golang-jwt/jwt/v4"
 	"github.com/hertz-contrib/jwt"
 	"net/http"
 	"time"
@@ -36,16 +36,17 @@ var JwtMiddleware *jwt.HertzJWTMiddleware
 func InitJwt() {
 	var err error
 	JwtMiddleware, err = jwt.New(&jwt.HertzJWTMiddleware{
-		Key:           []byte(constants.SecretKey),
-		TimeFunc:      time.Now,
-		Timeout:       time.Hour,
-		MaxRefresh:    time.Hour,
-		TokenLookup:   "header: Authorization, query: token, cookie: jwt",
-		TokenHeadName: "Bearer",
+		Key:         []byte(constants.SecretKey),
+		TimeFunc:    time.Now,
+		Timeout:     time.Hour,
+		MaxRefresh:  time.Hour,
+		TokenLookup: "query:token,form:token",
 		LoginResponse: func(ctx context.Context, c *app.RequestContext, code int, token string, expire time.Time) {
+			hlog.CtxInfof(ctx, "Login success ，token is issued clientIP: "+c.ClientIP())
 			c.Set("token", token)
 		},
 		Authenticator: func(ctx context.Context, c *app.RequestContext) (interface{}, error) {
+			fmt.Println("Authenticator 成功")
 			var req huser.UserLoginRequest
 			if err := c.BindAndValidate(&req); err != nil {
 				return nil, jwt.ErrMissingLoginValues
@@ -64,16 +65,23 @@ func InitJwt() {
 			c.Set("user_id", user.UserId)
 			return user.UserId, nil
 		},
-		IdentityKey: constants.IdentityKey,
-		IdentityHandler: func(ctx context.Context, c *app.RequestContext) interface{} {
-			claims := jwt.ExtractClaims(ctx, c)
-			id, _ := claims[constants.IdentityKey].(int64)
-			return &huser.User{
-				ID: id,
+		// Verify token and get the id of logged-in user
+		Authorizator: func(data interface{}, ctx context.Context, c *app.RequestContext) bool {
+			//fmt.Println("Authorization 中", data, reflect.TypeOf(data))
+			if v, ok := data.(float64); ok {
+				fmt.Println("Authorization 成功")
+				current_user_id := int64(v)
+				c.Set("current_user_id", current_user_id)
+				hlog.CtxInfof(ctx, "Token is verified clientIP: "+c.ClientIP())
+				return true
 			}
+			return false
 		},
+		IdentityKey: constants.IdentityKey,
+
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			// 将 userid 存入 token 的负载部分
+			//fmt.Println("PayloadFunc 中", data, reflect.TypeOf(data))
 			if v, ok := data.(int64); ok {
 				return jwt.MapClaims{
 					constants.IdentityKey: v,
@@ -91,10 +99,10 @@ func InitJwt() {
 				StatusMsg:  &errno.AuthorizationFailedErr.ErrMsg,
 			})
 		},
-		ParseOptions: []jwtv4.ParserOption{
-			jwtv4.WithValidMethods([]string{"HS256"}),
-			jwtv4.WithJSONNumber(),
-		},
+		//ParseOptions: []jwtv4.ParserOption{
+		//	jwtv4.WithValidMethods([]string{"HS256"}),
+		//	//jwtv4.WithJSONNumber(),
+		//},
 	})
 	if err != nil {
 		panic(err)
