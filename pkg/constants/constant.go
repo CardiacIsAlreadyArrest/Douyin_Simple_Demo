@@ -15,8 +15,19 @@
 
 package constants
 
+// minio
 const (
-	UserTableName = "user"
+	MinioEndPoint        = "localhost:18001" // 对象存储的 URL
+	MinioAccessKeyID     = "douyin"          // 账户 ID
+	MinioSecretAccessKey = "douyin111"       // 账户密码
+	MiniouseSSL          = false             // 不是用 https
+
+	MinioVideoBucketName = "videobucket"
+	MinioImgBucketName   = "imagebucket"
+)
+
+const (
+	UserTableName = "users"
 
 	SecretKey   = "secret key"
 	IdentityKey = "user id"
@@ -27,6 +38,6 @@ const (
 )
 
 var (
-	MySQLDefaultDSN = "gorm:gorm@tcp(localhost:3306)/test_douyin?charset=utf8&parseTime=True&loc=Local"
+	MySQLDefaultDSN = "gorm:gorm@tcp(localhost:18000)/test_douyin?charset=utf8&parseTime=True&loc=Local"
 	EtcdAddress     = "localhost:2379"
 )

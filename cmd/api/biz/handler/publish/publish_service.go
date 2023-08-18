@@ -2,9 +2,43 @@
 
 package publish
 
+import publish "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/model/publish"
+
 //import (
 //	"context"
 //
 //	"github.com/cloudwego/hertz/pkg/app"
 //	"github.com/cloudwego/hertz/pkg/protocol/consts"
 //)
+
+// PublishAction .
+// @router /douyin/publish/action/ [POST]
+func PublishAction(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req publish.PublishActionRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(publish.PublishActionResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+// PublishList .
+// @router /douyin/publish/list/ [GET]
+func PublishList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req publish.PublishListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(publish.PublishListResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}

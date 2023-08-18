@@ -10,9 +10,9 @@ import (
 
 type FeedRequest struct {
 	// 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
-	LatestTime *int64 `thrift:"latest_time,1,optional" form:"latest_time" json:"latest_time,omitempty" query:"latest_time"`
+	LatestTime *int64 `thrift:"latest_time,1,optional" json:"latest_time,omitempty" query:"latest_time"`
 	// 可选参数，登录用户设置
-	Token *string `thrift:"token,2,optional" form:"token" json:"token,omitempty" query:"token"`
+	Token *string `thrift:"token,2,optional" json:"token,omitempty" query:"token"`
 }
 
 func NewFeedRequest() *FeedRequest {

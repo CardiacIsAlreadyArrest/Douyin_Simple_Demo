@@ -1,8 +1,8 @@
 namespace go feed
 
 struct FeedRequest {
-    1: optional i64 latest_time,      // 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
-    2: optional string token,         // 可选参数，登录用户设置
+    1: optional i64 latest_time (api.query="latest_time")     // 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
+    2: optional string token (api.query="token")              // 可选参数，登录用户设置
 }
 
 struct FeedResponse {
@@ -39,5 +39,5 @@ struct User {
 
 service FeedService {
     // 获取视频流
-    FeedResponse Feed(1:required FeedRequest req)
+    FeedResponse Feed(1:required FeedRequest req) (api.get="/douyin/feed")
 }

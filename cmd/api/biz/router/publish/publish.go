@@ -3,7 +3,7 @@
 package publish
 
 import (
-	//publish "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/publish"
+	publish "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/publish"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -16,4 +16,19 @@ import (
 // Register register routes based on the IDL 'api.${HTTP Method}' annotation.
 func Register(r *server.Hertz) {
 
+	root := r.Group("/", rootMw()...)
+	{
+		_douyin := root.Group("/douyin", _douyinMw()...)
+		{
+			_publish := _douyin.Group("/publish", _publishMw()...)
+			{
+				_action := _publish.Group("/action", _actionMw()...)
+				_action.POST("/", append(_publishactionMw(), publish.PublishAction)...)
+			}
+			{
+				_list := _publish.Group("/list", _listMw()...)
+				_list.GET("/", append(_publishlistMw(), publish.PublishList)...)
+			}
+		}
+	}
 }

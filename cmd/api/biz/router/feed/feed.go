@@ -3,7 +3,7 @@
 package feed
 
 import (
-	//feed "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/feed"
+	feed "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/feed"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -16,4 +16,9 @@ import (
 // Register register routes based on the IDL 'api.${HTTP Method}' annotation.
 func Register(r *server.Hertz) {
 
+	root := r.Group("/", rootMw()...)
+	{
+		_douyin := root.Group("/douyin", _douyinMw()...)
+		_douyin.GET("/feed", append(_feedMw(), feed.Feed)...)
+	}
 }

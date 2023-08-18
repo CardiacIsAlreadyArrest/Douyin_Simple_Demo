@@ -10,11 +10,11 @@ import (
 
 type PublishActionRequest struct {
 	// 用户鉴权token
-	Token string `thrift:"token,1" form:"token" json:"token" query:"token"`
+	Token string `thrift:"token,1" json:"token" query:"token"`
 	// 视频数据
-	Data []byte `thrift:"data,2" form:"data" json:"data" query:"data"`
+	Data []byte `thrift:"data,2" json:"data" query:"data"`
 	// 视频标题
-	Title string `thrift:"title,3" form:"title" json:"title" query:"title"`
+	Title string `thrift:"title,3" json:"title" query:"title"`
 }
 
 func NewPublishActionRequest() *PublishActionRequest {
@@ -438,9 +438,9 @@ func (p *PublishActionResponse) String() string {
 
 type PublishListRequest struct {
 	// 用户id
-	UserID int64 `thrift:"user_id,1" form:"user_id" json:"user_id" query:"user_id"`
+	UserID int64 `thrift:"user_id,1" json:"user_id" query:"user_id"`
 	// 用户鉴权token
-	Token string `thrift:"token,2" form:"token" json:"token" query:"token"`
+	Token string `thrift:"token,2" json:"token" query:"token"`
 }
 
 func NewPublishListRequest() *PublishListRequest {
