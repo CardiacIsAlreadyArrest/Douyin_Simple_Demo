@@ -3,18 +3,31 @@
 package main
 
 import (
-	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/mw"
+	"context"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/mw/jwt"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/mw/minio"
 	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/rpc"
+	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/cloudwego/hertz/pkg/common/hlog"
 	"github.com/hertz-contrib/logger/accesslog"
 	hertzlogrus "github.com/hertz-contrib/logger/logrus"
 	"github.com/hertz-contrib/obs-opentelemetry/tracing"
+	"github.com/hertz-contrib/reverseproxy"
 )
+
+// 将对 /src/*name 的访问请求通过反向代理转发到 minio，即转发到 http://localhost:18001/*name
+func minioReverseProxy(c context.Context, ctx *app.RequestContext) {
+	proxy, _ := reverseproxy.NewSingleHostReverseProxy("http://localhost:18001")
+	ctx.URI().SetPath(ctx.Param("name"))
+	hlog.CtxInfof(c, string(ctx.Request.URI().Path()))
+	proxy.ServeHTTP(c, ctx)
+}
 
 func Init() {
 	rpc.InitRPC()
-	mw.InitJwt()
+	jwt.InitJwt()
+	minio.Init() // minio init
 	logger := hertzlogrus.NewLogger()
 	hlog.SetLogger(logger)
 	hlog.SetLevel(hlog.LevelInfo)

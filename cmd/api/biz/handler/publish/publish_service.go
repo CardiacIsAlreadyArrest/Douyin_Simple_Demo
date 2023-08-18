@@ -2,9 +2,86 @@
 
 package publish
 
-//import (
-//	"context"
-//
-//	"github.com/cloudwego/hertz/pkg/app"
-//	"github.com/cloudwego/hertz/pkg/protocol/consts"
-//)
+import (
+	"context"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler"
+	hpublish "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/model/publish"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/rpc"
+	kpublish "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/publish"
+	"github.com/Yra-A/Douyin_Simple_Demo/pkg/constants"
+	"github.com/Yra-A/Douyin_Simple_Demo/pkg/errno"
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"io"
+)
+
+// PublishAction .
+// @router /douyin/publish/action/ [POST]
+func PublishAction(ctx context.Context, c *app.RequestContext) {
+	var req hpublish.PublishActionRequest
+	if err := parseReq(&req, c); err != nil {
+		handler.BadResponse(c, errno.ConvertErr(err))
+		return
+	}
+	if int64(len(req.Data)) > constants.MaxVideoSize {
+		handler.BadResponse(c, errno.VideoExceedMaxSizeErr)
+		return
+	}
+	if len(req.Title) == 0 || len(req.Data) == 0 {
+		handler.BadResponse(c, errno.ParamErr)
+		return
+	}
+	kresp, err := rpc.PublishAction(context.Background(), &kpublish.PublishActionRequest{
+		Token: req.Token,
+		Data:  req.Data,
+		Title: req.Title,
+	})
+	if err != nil {
+		handler.BadResponse(c, errno.ConvertErr(err))
+		return
+	}
+
+	resp := &hpublish.PublishActionResponse{
+		StatusCode: kresp.StatusCode,
+		StatusMsg:  kresp.StatusMsg,
+	}
+
+	handler.SendResponse(c, resp)
+}
+
+// PublishList .
+// @router /douyin/publish/list/ [GET]
+func PublishList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req hpublish.PublishListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(hpublish.PublishListResponse)
+
+	c.JSON(consts.StatusOK, resp)
+}
+
+func parseReq(req *hpublish.PublishActionRequest, c *app.RequestContext) error {
+	file, err := c.FormFile("data")
+	if err != nil {
+		return err
+	}
+	src, err := file.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	bytes, err := io.ReadAll(src)
+	if err != nil {
+		return err
+	}
+	req.Data = bytes
+	req.Token = c.PostForm("token")
+	req.Title = c.PostForm("title")
+	return nil
+}

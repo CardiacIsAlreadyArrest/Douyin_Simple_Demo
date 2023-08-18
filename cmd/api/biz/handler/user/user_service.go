@@ -4,10 +4,9 @@ package user
 
 import (
 	"context"
-	"fmt"
 	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler"
 	huser "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/model/user"
-	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/mw"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/mw/jwt"
 	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/rpc"
 	kuser "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/user"
 	"github.com/Yra-A/Douyin_Simple_Demo/pkg/errno"
@@ -34,7 +33,7 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 		handler.BadResponse(c, errno.ConvertErr(err))
 		return
 	}
-	mw.JwtMiddleware.LoginHandler(ctx, c)
+	jwt.JwtMiddleware.LoginHandler(ctx, c)
 	v, _ := c.Get("user_id")
 	user_id := v.(int64)
 	token := c.GetString("token")
@@ -50,10 +49,9 @@ func UserRegister(ctx context.Context, c *app.RequestContext) {
 // UserLogin .
 // @router /douyin/user/login/ [POST]
 func UserLogin(ctx context.Context, c *app.RequestContext) {
-	mw.JwtMiddleware.LoginHandler(ctx, c)
+	jwt.JwtMiddleware.LoginHandler(ctx, c)
 	v, ok := c.Get("user_id")
 	if !ok {
-		fmt.Println("密码不对!")
 		handler.BadResponse(c, errno.LoginFailedErr)
 		return
 	}
@@ -71,7 +69,6 @@ func UserLogin(ctx context.Context, c *app.RequestContext) {
 // UserInfo .
 // @router /douyin/user/ [GET]
 func UserInfo(ctx context.Context, c *app.RequestContext) {
-	fmt.Println("????????????????????????!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 	var req huser.UserInfoRequest
 	if err := c.BindAndValidate(&req); err != nil {
 		handler.BadResponse(c, errno.ConvertErr(err))

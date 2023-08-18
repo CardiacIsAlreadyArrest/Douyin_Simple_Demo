@@ -1,9 +1,9 @@
 namespace go publish
 
 struct PublishActionRequest {
-    1: string token,                 // 用户鉴权token
-    2: binary data,                  // 视频数据
-    3: string title                  // 视频标题
+    1: string token (api.form="token")                // 用户鉴权token
+    2: binary data  (api.form="data")                 // 视频数据
+    3: string title (api.form="title")                // 视频标题
 }
 
 struct PublishActionResponse {
@@ -12,8 +12,8 @@ struct PublishActionResponse {
 }
 
 struct PublishListRequest {
-    1: i64 user_id,                  // 用户id
-    2: string token                  // 用户鉴权token
+    1: i64 user_id  (api.query="user_id")                  // 用户id
+    2: string token (api.query="token")                    // 用户鉴权token
 }
 
 struct PublishListResponse {
@@ -49,7 +49,7 @@ struct User {
 
 service PublishService {
     // 视频投稿操作
-    PublishActionResponse PublishAction(1: PublishActionRequest req)
+    PublishActionResponse PublishAction(1: PublishActionRequest req) (api.post="/douyin/publish/action/")
     // 获取发布列表，列出用户所有投稿过的视频
-    PublishListResponse PublishList(1: PublishListRequest req)
+    PublishListResponse PublishList(1: PublishListRequest req) (api.get="/douyin/publish/list/")
 }

@@ -32,6 +32,7 @@ const (
 	PasswordIncorrectErrCode     = 10007
 	TokenEmptyErrCode            = 10008
 	LoginFailedErrCode           = 10009
+	VideoExceedMaxSizeErrCode    = 10010
 )
 
 type ErrNo struct {
@@ -63,6 +64,7 @@ var (
 	PasswordIncorrectErr     = NewErrNo(PasswordIncorrectErrCode, "密码不正确")
 	LoginFailedErr           = NewErrNo(LoginFailedErrCode, "用户名或密码不正确")
 	TokenEmptyErr            = NewErrNo(TokenEmptyErrCode, "token 为空")
+	VideoExceedMaxSizeErr    = NewErrNo(VideoExceedMaxSizeErrCode, "单个视频不得超过 128 MB")
 )
 
 // ConvertErr convert error to Errno
