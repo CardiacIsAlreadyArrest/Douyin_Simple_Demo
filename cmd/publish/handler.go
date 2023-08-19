@@ -2,7 +2,10 @@ package main
 
 import (
 	"context"
+	service "github.com/Yra-A/Douyin_Simple_Demo/cmd/publish/service"
 	publish "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/publish"
+	"github.com/Yra-A/Douyin_Simple_Demo/pkg/constants"
+	"github.com/Yra-A/Douyin_Simple_Demo/pkg/errno"
 	"github.com/cloudwego/kitex/pkg/klog"
 )
 
@@ -11,8 +14,39 @@ type PublishServiceImpl struct{}
 
 // PublishAction implements the PublishServiceImpl interface.
 func (s *PublishServiceImpl) PublishAction(ctx context.Context, req *publish.PublishActionRequest) (resp *publish.PublishActionResponse, err error) {
-	klog.CtxDebugf(ctx, "PublishAction called: %s")
-	return
+	klog.CtxDebugf(ctx, "【PublishAction called】user id: %v; title: %v; data length: %v", req.UserId, req.Title, len(req.Data))
+
+	if len(req.Data) == 0 || len(req.Title) == 0 {
+		resp = &publish.PublishActionResponse{
+			StatusCode: errno.ParamErrCode,
+			StatusMsg:  &errno.ParamErr.ErrMsg,
+		}
+		return resp, nil
+	}
+
+	if int64(len(req.Data)) > constants.MaxVideoSize {
+		resp = &publish.PublishActionResponse{
+			StatusCode: errno.VideoExceedMaxSizeErrCode,
+			StatusMsg:  &errno.VideoExceedMaxSizeErr.ErrMsg,
+		}
+		return resp, nil
+	}
+
+	err = service.NewUploadVideoService(ctx).UploadVideo(req)
+	if err != nil {
+		ErrMsg := err.Error()
+		resp = &publish.PublishActionResponse{
+			StatusCode: errno.FalseCode,
+			StatusMsg:  &ErrMsg,
+		}
+		return resp, nil
+	}
+
+	resp = &publish.PublishActionResponse{
+		StatusCode: errno.SuccessCode,
+		StatusMsg:  &errno.Success.ErrMsg,
+	}
+	return resp, nil
 }
 
 // PublishList implements the PublishServiceImpl interface.

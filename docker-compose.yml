@@ -20,7 +20,7 @@ services:
       - dev
 
   minio:
-    image: minio/minio
+    image: quay.io/minio/minio:latest
     container_name: tiktok_minio
     ports:
       - "18001:9000"

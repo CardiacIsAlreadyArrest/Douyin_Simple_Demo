@@ -24,7 +24,7 @@ func initPublishRpc() {
 	}
 
 	c, err := publishservice.NewClient(
-		constants.UserServiceName,
+		constants.PublishServiceName,
 		client.WithMiddleware(middleware.CommonMiddleware),
 		client.WithInstanceMW(middleware.ClientMiddleware),
 		client.WithMuxConnection(1),                       // mux
@@ -42,6 +42,7 @@ func initPublishRpc() {
 
 // PublishAction 视频投稿【rpc 客户端】
 func PublishAction(ctx context.Context, req *publish.PublishActionRequest) (*publish.PublishActionResponse, error) {
+	resp := new(publish.PublishActionResponse)
 	resp, err := publishClient.PublishAction(ctx, req)
 	if err != nil {
 		return resp, err

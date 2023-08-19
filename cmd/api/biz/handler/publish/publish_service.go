@@ -10,16 +10,17 @@ import (
 	kpublish "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/publish"
 	"github.com/Yra-A/Douyin_Simple_Demo/pkg/constants"
 	"github.com/Yra-A/Douyin_Simple_Demo/pkg/errno"
+	"github.com/Yra-A/Douyin_Simple_Demo/pkg/utils"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"io"
 )
 
 // PublishAction .
 // @router /douyin/publish/action/ [POST]
 func PublishAction(ctx context.Context, c *app.RequestContext) {
 	var req hpublish.PublishActionRequest
-	if err := parseReq(&req, c); err != nil {
+
+	if err := utils.ParsePubActionRequest(&req, c); err != nil {
 		handler.BadResponse(c, errno.ConvertErr(err))
 		return
 	}
@@ -31,10 +32,16 @@ func PublishAction(ctx context.Context, c *app.RequestContext) {
 		handler.BadResponse(c, errno.ParamErr)
 		return
 	}
+
+	if user_id, exist := c.Get("current_user_id"); exist {
+		req.UserID = user_id.(int64)
+	}
+
 	kresp, err := rpc.PublishAction(context.Background(), &kpublish.PublishActionRequest{
-		Token: req.Token,
-		Data:  req.Data,
-		Title: req.Title,
+		Token:  req.Token,
+		Data:   req.Data,
+		Title:  req.Title,
+		UserId: req.UserID,
 	})
 	if err != nil {
 		handler.BadResponse(c, errno.ConvertErr(err))
@@ -63,25 +70,4 @@ func PublishList(ctx context.Context, c *app.RequestContext) {
 	resp := new(hpublish.PublishListResponse)
 
 	c.JSON(consts.StatusOK, resp)
-}
-
-func parseReq(req *hpublish.PublishActionRequest, c *app.RequestContext) error {
-	file, err := c.FormFile("data")
-	if err != nil {
-		return err
-	}
-	src, err := file.Open()
-	if err != nil {
-		return err
-	}
-	defer src.Close()
-
-	bytes, err := io.ReadAll(src)
-	if err != nil {
-		return err
-	}
-	req.Data = bytes
-	req.Token = c.PostForm("token")
-	req.Title = c.PostForm("title")
-	return nil
 }
