@@ -18,6 +18,7 @@ package db
 import (
 	"github.com/Yra-A/Douyin_Simple_Demo/pkg/constants"
 	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 	gormopentracing "gorm.io/plugin/opentracing"
 )
 
@@ -40,7 +41,7 @@ func Init() {
 		panic(err)
 	}
 
-	//err = DB.AutoMigrate(&Video{})
+	err = DB.AutoMigrate(&Video{})
 	if err != nil {
 		panic(err)
 	}
