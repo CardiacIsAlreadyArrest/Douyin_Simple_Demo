@@ -1,6 +1,11 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+-- 每张表结构还会加上 gorm.Model
+
+-- ----------------------------
+-- Table structure for users
+-- ----------------------------
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户ID',
@@ -14,6 +19,9 @@ CREATE TABLE `users` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='用户表';
 
 
+-- ----------------------------
+-- Table structure for videos
+-- ----------------------------
 DROP TABLE IF EXISTS `videos`;
 CREATE TABLE `videos` (
   `id` bigint NOT NULL AUTO_INCREMENT COMMENT '视频ID',

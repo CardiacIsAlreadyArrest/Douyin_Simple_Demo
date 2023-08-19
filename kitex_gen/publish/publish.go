@@ -11,9 +11,10 @@ import (
 )
 
 type PublishActionRequest struct {
-	Token string `thrift:"token,1" frugal:"1,default,string" json:"token"`
-	Data  []byte `thrift:"data,2" frugal:"2,default,binary" json:"data"`
-	Title string `thrift:"title,3" frugal:"3,default,string" json:"title"`
+	Token  string `thrift:"token,1" frugal:"1,default,string" json:"token"`
+	Data   []byte `thrift:"data,2" frugal:"2,default,binary" json:"data"`
+	Title  string `thrift:"title,3" frugal:"3,default,string" json:"title"`
+	UserId int64  `thrift:"user_id,4" frugal:"4,default,i64" json:"user_id"`
 }
 
 func NewPublishActionRequest() *PublishActionRequest {
@@ -35,6 +36,10 @@ func (p *PublishActionRequest) GetData() (v []byte) {
 func (p *PublishActionRequest) GetTitle() (v string) {
 	return p.Title
 }
+
+func (p *PublishActionRequest) GetUserId() (v int64) {
+	return p.UserId
+}
 func (p *PublishActionRequest) SetToken(val string) {
 	p.Token = val
 }
@@ -44,11 +49,15 @@ func (p *PublishActionRequest) SetData(val []byte) {
 func (p *PublishActionRequest) SetTitle(val string) {
 	p.Title = val
 }
+func (p *PublishActionRequest) SetUserId(val int64) {
+	p.UserId = val
+}
 
 var fieldIDToName_PublishActionRequest = map[int16]string{
 	1: "token",
 	2: "data",
 	3: "title",
+	4: "user_id",
 }
 
 func (p *PublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -93,6 +102,16 @@ func (p *PublishActionRequest) Read(iprot thrift.TProtocol) (err error) {
 		case 3:
 			if fieldTypeId == thrift.STRING {
 				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 4:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField4(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -157,6 +176,15 @@ func (p *PublishActionRequest) ReadField3(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *PublishActionRequest) ReadField4(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.UserId = v
+	}
+	return nil
+}
+
 func (p *PublishActionRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("PublishActionRequest"); err != nil {
@@ -173,6 +201,10 @@ func (p *PublishActionRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
 			goto WriteFieldError
 		}
 
@@ -245,6 +277,23 @@ WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
+func (p *PublishActionRequest) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("user_id", thrift.I64, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.UserId); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
+}
+
 func (p *PublishActionRequest) String() string {
 	if p == nil {
 		return "<nil>"
@@ -267,6 +316,9 @@ func (p *PublishActionRequest) DeepEqual(ano *PublishActionRequest) bool {
 	if !p.Field3DeepEqual(ano.Title) {
 		return false
 	}
+	if !p.Field4DeepEqual(ano.UserId) {
+		return false
+	}
 	return true
 }
 
@@ -287,6 +339,13 @@ func (p *PublishActionRequest) Field2DeepEqual(src []byte) bool {
 func (p *PublishActionRequest) Field3DeepEqual(src string) bool {
 
 	if strings.Compare(p.Title, src) != 0 {
+		return false
+	}
+	return true
+}
+func (p *PublishActionRequest) Field4DeepEqual(src int64) bool {
+
+	if p.UserId != src {
 		return false
 	}
 	return true

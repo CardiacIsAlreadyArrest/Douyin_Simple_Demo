@@ -11,6 +11,10 @@ run_api:
 run_user:
 	cd cmd/user && sh ./build.sh && sh ./output/bootstrap.sh
 
+## 启动 publish 服务
+run_publish:
+	cd cmd/publish && sh ./build.sh && sh ./output/bootstrap.sh
+
 
 ## 启动相关服务
 start:
@@ -18,8 +22,8 @@ start:
 
 ## 关闭相关服务
 stop:
-	docker-compose stop
+	docker-compose --profile dev stop
 
 ## 关闭并删除
 down:
-	docker-compose down
+	docker-compose --profile dev down

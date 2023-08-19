@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-RUN_NAME="FeedService"
+RUN_NAME="UserService"
 
 mkdir -p output/bin
 cp script/* output/

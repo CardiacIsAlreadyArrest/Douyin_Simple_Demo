@@ -16,6 +16,7 @@
 package main
 
 import (
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/publish/mw/minio"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	"net"
 
@@ -34,36 +35,37 @@ import (
 )
 
 func Init() {
-  klog.SetLogger(kitexlogrus.NewLogger())
-  klog.SetLevel(klog.LevelDebug)
-  dal.Init()
+	klog.SetLogger(kitexlogrus.NewLogger())
+	klog.SetLevel(klog.LevelDebug)
+	dal.Init()
+	minio.Init() // minio init
 }
 
 func main() {
-  r, err := etcd.NewEtcdRegistry([]string{constants.EtcdAddress})
-  if err != nil {
-    panic(err)
-  }
+	r, err := etcd.NewEtcdRegistry([]string{constants.EtcdAddress})
+	if err != nil {
+		panic(err)
+	}
 
-  addr, err := net.ResolveTCPAddr("tcp", "localhost:8890")
-  if err != nil {
-    panic(err)
-  }
-  Init()
+	addr, err := net.ResolveTCPAddr("tcp", "localhost:8890")
+	if err != nil {
+		panic(err)
+	}
+	Init()
 
-  svr := publish.NewServer(new(PublishServiceImpl),
-    server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: constants.PublishServiceName}), // server name
-    server.WithMiddleware(middleware.CommonMiddleware),                                                // middleware
-    server.WithMiddleware(middleware.ServerMiddleware),
-    server.WithServiceAddr(addr),                                       // address
-    server.WithLimit(&limit.Option{MaxConnections: 1000, MaxQPS: 100}), // limit
-    server.WithMuxTransport(),                                          // Multiplex
-    server.WithSuite(tracing.NewServerSuite()),                         // tracer
-    server.WithBoundHandler(bound.NewCpuLimitHandler()),                // BoundHandler
-    server.WithRegistry(r),                                             // registry
-  )
-  err = svr.Run()
-  if err != nil {
-    klog.Fatal(err)
-  }
+	svr := publish.NewServer(new(PublishServiceImpl),
+		server.WithServerBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: constants.PublishServiceName}), // server name
+		server.WithMiddleware(middleware.CommonMiddleware),                                                // middleware
+		server.WithMiddleware(middleware.ServerMiddleware),
+		server.WithServiceAddr(addr),                                       // address
+		server.WithLimit(&limit.Option{MaxConnections: 1000, MaxQPS: 100}), // limit
+		server.WithMuxTransport(),                                          // Multiplex
+		server.WithSuite(tracing.NewServerSuite()),                         // tracer
+		server.WithBoundHandler(bound.NewCpuLimitHandler()),                // BoundHandler
+		server.WithRegistry(r),                                             // registry
+	)
+	err = svr.Run()
+	if err != nil {
+		klog.Fatal(err)
+	}
 }

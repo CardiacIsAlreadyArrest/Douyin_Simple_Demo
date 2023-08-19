@@ -4,6 +4,7 @@ struct PublishActionRequest {
     1: string token (api.form="token")                // 用户鉴权token
     2: binary data  (api.form="data")                 // 视频数据
     3: string title (api.form="title")                // 视频标题
+    4: i64 user_id                                    // 用户id
 }
 
 struct PublishActionResponse {

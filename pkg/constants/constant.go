@@ -27,10 +27,10 @@ const (
 )
 
 const (
-	UserTableName = "users"
-
-	SecretKey   = "secret key"
-	IdentityKey = "user id"
+	UserTableName   = "users"
+	VideosTableName = "videos"
+	SecretKey       = "secret key"
+	IdentityKey     = "user id"
 
 	UserServiceName    = "user"
 	PublishServiceName = "publish"
@@ -38,6 +38,7 @@ const (
 	CPURateLimit float64 = 80.0
 
 	MaxVideoSize int64 = 128 * 1024 * 1024 // 可上传的单个视频大小最大为 128 MB
+	MaxFeedCount       = 30                // 视频列表最大视频个数
 )
 
 var (
