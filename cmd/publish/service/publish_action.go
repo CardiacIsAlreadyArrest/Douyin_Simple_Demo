@@ -1,14 +1,13 @@
 package service
 
 import (
-  "bytes"
   "context"
   "fmt"
   "github.com/Yra-A/Douyin_Simple_Demo/cmd/publish/dal/db"
   "github.com/Yra-A/Douyin_Simple_Demo/cmd/publish/mw/ffmpeg"
-  "github.com/Yra-A/Douyin_Simple_Demo/cmd/publish/mw/minio"
+  "github.com/Yra-A/Douyin_Simple_Demo/cmd/publish/mw/oss"
   "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/publish"
-  "github.com/Yra-A/Douyin_Simple_Demo/pkg/constants"
+  conf "github.com/Yra-A/Douyin_Simple_Demo/pkg/configs/oss"
   "github.com/Yra-A/Douyin_Simple_Demo/pkg/utils"
   "github.com/cloudwego/hertz/pkg/common/hlog"
   "strconv"
@@ -35,46 +34,42 @@ func (s *UploadVideoService) UploadVideo(req *publish.PublishActionRequest) erro
   // TODO：支持自定义扩展名，现在默认为 .mp4 和 .png
   videoName := utils.NewVideoName(user_id, nowTime.Unix()) // user_id.nowTime.Unix().mp4
   imageName := utils.NewImageName(user_id, nowTime.Unix()) // user_id.nowTime.Unix().png
-  videoBytesBuf := bytes.NewBuffer(videoBytes)
 
   /*------------------------------------------------------*/
   /*------------------上传视频到 minio 服务------------------*/
   /*------------------------------------------------------*/
-  uploadInfo, err := minio.PutToBucketByBuf(s.ctx, constants.MinioVideoBucketName, videoName, videoBytesBuf)
-  hlog.CtxInfof(s.ctx, "视频上传大小为: "+strconv.FormatInt(uploadInfo.Size, 10)+"B")
+  err := oss.UploadFile(videoName, videoBytes)
+  hlog.CtxInfof(s.ctx, "视频上传大小为: "+strconv.FormatInt(int64(len(videoBytes)), 10)+"B")
   if err != nil {
     hlog.CtxInfof(s.ctx, "上传视频出现错误: "+err.Error())
   }
-
-  PlayURL, err := minio.GetObjURL(s.ctx, constants.MinioVideoBucketName, videoName)
-  PlayURLStr := PlayURL.String()
+  PlayURL := conf.PublicURL + videoName
   if err != nil {
     hlog.CtxInfof(s.ctx, "获取视频 URL 出现错误: "+err.Error())
   }
-  fmt.Println("视频 URL 为 " + PlayURLStr)
+  fmt.Println("视频 URL 为 " + PlayURL)
 
   /*---------------------------------------------------------------------------------*/
   /*------------------先用 ffmpeg 获取视频封面，再上传视频封面到 minio 服务------------------*/
   /*---------------------------------------------------------------------------------*/
-  imageBuf, err := ffmpeg.GetSnapshot(PlayURLStr)
+  imageBuf, err := ffmpeg.GetSnapshot(PlayURL)
 
-  uploadInfo, err = minio.PutToBucketByBuf(s.ctx, constants.MinioImgBucketName, imageName, imageBuf)
-  hlog.CtxInfof(s.ctx, "封面上传大小为:"+strconv.FormatInt(uploadInfo.Size, 10)+"B")
+  err = oss.UploadFile(imageName, imageBuf.Bytes())
+  hlog.CtxInfof(s.ctx, "封面上传大小为:"+strconv.FormatInt(int64(imageBuf.Len()), 10)+"B")
   if err != nil {
     hlog.CtxInfof(s.ctx, "上传封面出现错误: "+err.Error())
   }
-  CoverURL, err := minio.GetObjURL(s.ctx, constants.MinioImgBucketName, imageName)
-  CoverURLStr := CoverURL.String()
+  CoverURL := conf.PublicURL + imageName
   if err != nil {
     hlog.CtxInfof(s.ctx, "获取封面 URL 出现错误: "+err.Error())
   }
-  fmt.Println("封面 URL 为 " + CoverURLStr)
+  fmt.Println("封面 URL 为 " + CoverURL)
 
   // 将相关内容上传到 MySQL 数据库
   _, err = db.CreateVideo(&db.Video{
     AuthorID:    user_id,
-    PlayURL:     PlayURLStr,
-    CoverURL:    CoverURLStr,
+    PlayURL:     PlayURL,
+    CoverURL:    CoverURL,
     PublishTime: nowTime,
     Title:       title,
   })

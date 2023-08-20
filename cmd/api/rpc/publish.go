@@ -52,3 +52,16 @@ func PublishAction(ctx context.Context, req *publish.PublishActionRequest) (*pub
 	}
 	return resp, nil
 }
+
+// PublishList 发布列表【rpc 客户端】
+func PublishList(ctx context.Context, req *publish.PublishListRequest) (*publish.PublishListResponse, error) {
+	resp := new(publish.PublishListResponse)
+	resp, err := publishClient.PublishList(ctx, req)
+	if err != nil {
+		return resp, err
+	}
+	if resp.StatusCode != 0 {
+		return resp, errno.NewErrNo(int64(resp.StatusCode), *resp.StatusMsg)
+	}
+	return resp, nil
+}

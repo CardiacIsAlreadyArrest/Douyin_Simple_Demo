@@ -16,11 +16,11 @@
 package main
 
 import (
-	"github.com/Yra-A/Douyin_Simple_Demo/cmd/publish/mw/minio"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/publish/mw/oss"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/publish/rpc"
+	"github.com/Yra-A/Douyin_Simple_Demo/pkg/bound"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	"net"
-
-	"github.com/Yra-A/Douyin_Simple_Demo/pkg/bound"
 
 	"github.com/Yra-A/Douyin_Simple_Demo/cmd/publish/dal"
 	publish "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/publish/publishservice"
@@ -38,7 +38,8 @@ func Init() {
 	klog.SetLogger(kitexlogrus.NewLogger())
 	klog.SetLevel(klog.LevelDebug)
 	dal.Init()
-	minio.Init() // minio init
+	rpc.InitRPC()
+	oss.Init() // minio init
 }
 
 func main() {

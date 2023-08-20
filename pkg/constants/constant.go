@@ -17,13 +17,13 @@ package constants
 
 // minio
 const (
-	MinioEndPoint        = "localhost:18001" // 对象存储的 URL
-	MinioAccessKeyID     = "douyin"          // 账户 ID
-	MinioSecretAccessKey = "douyin111"       // 账户密码
-	MiniouseSSL          = false             // 不是用 https
-
-	MinioVideoBucketName = "videobucket"
-	MinioImgBucketName   = "imagebucket"
+// MinioEndPoint        = "localhost:18001" // 对象存储的 URL
+// MinioAccessKeyID     = "douyin"          // 账户 ID
+// MinioSecretAccessKey = "douyin111"       // 账户密码
+// MiniouseSSL          = false             // 不是用 https
+//
+// MinioVideoBucketName = "videobucket"
+// MinioImgBucketName   = "imagebucket"
 )
 
 const (

@@ -35,6 +35,9 @@ func PublishAction(ctx context.Context, c *app.RequestContext) {
 
 	if user_id, exist := c.Get("current_user_id"); exist {
 		req.UserID = user_id.(int64)
+	} else {
+		handler.BadResponse(c, errno.AuthorizationFailedErr)
+		return
 	}
 
 	kresp, err := rpc.PublishAction(context.Background(), &kpublish.PublishActionRequest{
@@ -67,7 +70,52 @@ func PublishList(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new(hpublish.PublishListResponse)
+	if user_id, exist := c.Get("current_user_id"); exist {
+		req.UserID = user_id.(int64)
+	} else {
+		handler.BadResponse(c, errno.AuthorizationFailedErr)
+		return
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	kresp, err := rpc.PublishList(context.Background(), &kpublish.PublishListRequest{
+		UserId: req.UserID,
+		Token:  req.Token,
+	})
+	if err != nil {
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := &hpublish.PublishListResponse{
+		StatusCode: kresp.StatusCode,
+		StatusMsg:  kresp.StatusMsg,
+	}
+
+	for _, v := range kresp.VideoList {
+		author := &hpublish.User{
+			ID:              v.Author.Id,
+			Name:            v.Author.Name,
+			FollowCount:     v.Author.FollowCount,
+			FollowerCount:   v.Author.FollowerCount,
+			IsFollow:        v.Author.IsFollow,
+			Avatar:          v.Author.Avatar,
+			BackgroundImage: v.Author.BackgroundImage,
+			Signature:       v.Author.Signature,
+			TotalFavorited:  v.Author.TotalFavorited,
+			WorkCount:       v.Author.WorkCount,
+			FavoriteCount:   v.Author.FavoriteCount,
+		}
+		resp.VideoList = append(resp.VideoList, &hpublish.Video{
+			ID:            v.Id,
+			Author:        author,
+			PlayURL:       v.PlayUrl,
+			CoverURL:      v.CoverUrl,
+			FavoriteCount: v.FavoriteCount,
+			CommentCount:  v.CommentCount,
+			IsFavorite:    v.IsFavorite,
+			Title:         v.Title,
+		})
+	}
+
+	handler.SendResponse(c, resp)
 }
