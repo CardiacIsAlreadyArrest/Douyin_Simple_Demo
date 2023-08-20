@@ -57,6 +57,13 @@ struct IsFavoriteResponse {
     1: bool  is_favorite
 }
 
+struct FavoriteCountRequest {
+    1: i64 video_id
+}
+struct FavoriteCountResponse {
+    1: i64 favorite_count
+}
+
 service FavoriteService {
     // 点赞操作
     FavoriteActionResponse ActionFavorite(1:required FavoriteActionRequest req)
