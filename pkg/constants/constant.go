@@ -27,10 +27,12 @@ const (
 )
 
 const (
-	UserTableName   = "users"
-	VideosTableName = "videos"
-	SecretKey       = "secret key"
-	IdentityKey     = "user id"
+	UserTableName     = "users"
+	VideosTableName   = "videos"
+	FavoriteTableName = "favorites"
+
+	SecretKey   = "secret key"
+	IdentityKey = "user id"
 
 	UserServiceName    = "user"
 	PublishServiceName = "publish"

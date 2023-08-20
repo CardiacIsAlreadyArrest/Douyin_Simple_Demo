@@ -4,6 +4,7 @@ struct FavoriteActionRequest {
     1: string token,           // 用户鉴权token
     2: i64 video_id,           // 视频id
     3: i32 action_type         // 1-点赞，2-取消点赞
+    4: i64 user_id             // 用户id
 }
 
 struct FavoriteActionResponse {
@@ -46,6 +47,15 @@ struct User {
     10: optional i64 work_count,   // 作品数量
     11: optional i64 favorite_count // 点赞数量
 }
+//is_favorite   ueser_id like video_id
+struct IsFavoriteRequest {
+    1: i64 user_id
+    2:i64 video_id
+}
+
+struct IsFavoriteResponse {
+    1: bool  is_favorite
+}
 
 service FavoriteService {
     // 点赞操作
@@ -53,3 +63,4 @@ service FavoriteService {
     // 获取喜欢列表
     FavoriteListResponse ListFavorite(1:required FavoriteListRequest req)
 }
+
