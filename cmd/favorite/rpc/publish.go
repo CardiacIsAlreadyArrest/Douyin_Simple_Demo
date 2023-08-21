@@ -1,8 +1,10 @@
 package rpc
 
 import (
+	"context"
 	"time"
 
+	"github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/publish"
 	"github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/publish/publishservice"
 	"github.com/Yra-A/Douyin_Simple_Demo/pkg/constants"
 	"github.com/Yra-A/Douyin_Simple_Demo/pkg/middleware"
@@ -37,11 +39,10 @@ func initPublish() {
 	publishClient = c
 }
 
-// userid to videolist
-// func PublishIds2List(ctx context.Context, req *publish.Ids2ListRequest) (*publish.Ids2ListResponse, error) {
-// 	resp, err := publishClient.PublishIds2List(ctx, req)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-// 	return resp, nil
-// }
+func PublishIds2List(ctx context.Context, req *publish.PublishListRequest) (*publish.PublishListResponse, error) {
+	resp, err := publishClient.PublishList(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

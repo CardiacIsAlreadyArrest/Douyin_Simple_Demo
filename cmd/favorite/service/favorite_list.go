@@ -5,7 +5,9 @@ import (
 	"log"
 
 	"github.com/Yra-A/Douyin_Simple_Demo/cmd/favorite/dal/db"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/favorite/rpc"
 	"github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/favorite"
+	"github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/publish"
 )
 
 type FavoriteListService struct {
@@ -28,10 +30,13 @@ func (s *FavoriteListService) FavoriteList(req *favorite.FavoriteListRequest) ([
 		log.Println("FavoriteList : video_ids is blank")
 	}
 
-	//TODO : video_ids -> videos
-	//----------------------下面注释的是别人写的-----------------
-	// resp, err := rpc.PublishIds2List(s.ctx, &publish.Ids2ListRequest{VideoId: video_ids, UserId: req.UserId, MUserId: req.MUserId})
-	// f_video := pack.PublishVideo2FavoriteVideo(resp.VideoList)
-	// return f_video, err
-	return nil, nil
+	temp, err := rpc.PublishIds2List(s.ctx, &publish.PublishListRequest{UserId: req.UserId, Token: req.Token})
+
+	var resp []*favorite.Video
+	for _, a := range temp.VideoList {
+		b := &favorite.Video{Id: a.Id, Author: (*favorite.User)(a.Author), PlayUrl: a.PlayUrl, CoverUrl: a.CoverUrl, FavoriteCount: a.FavoriteCount, IsFavorite: a.IsFavorite, Title: a.Title}
+		resp = append(resp, b)
+	}
+
+	return resp, err
 }

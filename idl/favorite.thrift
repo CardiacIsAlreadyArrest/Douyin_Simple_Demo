@@ -1,10 +1,10 @@
 namespace go favorite
 
 struct FavoriteActionRequest {
-    1: string token,           // 用户鉴权token
-    2: i64 video_id,           // 视频id
-    3: i32 action_type         // 1-点赞，2-取消点赞
-    4: i64 user_id             // 用户id
+    1: string token   (api.query="token")    // 用户鉴权token
+    2: i64 video_id   (api.query="video_id")       // 视频id
+    3: i32 action_type   (api.query="action_type")      // 1-点赞，2-取消点赞
+    4: i64 user_id       (api.query="user_id")  // 用户id
 }
 
 struct FavoriteActionResponse {
@@ -13,8 +13,8 @@ struct FavoriteActionResponse {
 }
 
 struct FavoriteListRequest {
-    1: i64 user_id,            // 用户id
-    2: string token            // 用户鉴权token
+    1: i64 user_id     (api.query="user_id")       // 用户id
+    2: string token     (api.query="token")       // 用户鉴权token
 }
 
 struct FavoriteListResponse {
@@ -49,16 +49,16 @@ struct User {
 }
 //is_favorite   ueser_id like video_id
 struct IsFavoriteRequest {
-    1: i64 user_id
-    2:i64 video_id
+    1: i64 user_id (api.query="user_id")
+    2: i64 video_id  (api.query="video_id")
 }
 
 struct IsFavoriteResponse {
-    1: bool  is_favorite
+    1: bool  is_favorite 
 }
 
 struct FavoriteCountRequest {
-    1: i64 video_id
+    1: i64 video_id  (api.query="video_id")
 }
 struct FavoriteCountResponse {
     1: i64 favorite_count
@@ -66,8 +66,12 @@ struct FavoriteCountResponse {
 
 service FavoriteService {
     // 点赞操作
-    FavoriteActionResponse ActionFavorite(1:required FavoriteActionRequest req)
+    FavoriteActionResponse FavoriteAction(1:required FavoriteActionRequest req) (api.post="/douyin/favorite/action/")
     // 获取喜欢列表
-    FavoriteListResponse ListFavorite(1:required FavoriteListRequest req)
+    FavoriteListResponse FavoriteList(1:required FavoriteListRequest req) (api.get="/douyin/favorite/list/")
+    // 获取喜欢技术
+    FavoriteCountResponse FavoriteCount(1:FavoriteCountRequest req) (api.get="/douyin/favorite/count/")
+    // 是否喜欢
+    IsFavoriteResponse IsFavorite(1:IsFavoriteRequest req)
 }
 

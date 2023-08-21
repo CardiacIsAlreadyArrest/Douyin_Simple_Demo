@@ -34,8 +34,9 @@ const (
 	SecretKey   = "secret key"
 	IdentityKey = "user id"
 
-	UserServiceName    = "user"
-	PublishServiceName = "publish"
+	UserServiceName     = "user"
+	PublishServiceName  = "publish"
+	FavoriteServiceName = "favorite"
 
 	CPURateLimit float64 = 80.0
 
