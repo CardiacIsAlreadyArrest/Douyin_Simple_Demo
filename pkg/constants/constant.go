@@ -34,6 +34,7 @@ const (
 
 	UserServiceName    = "user"
 	PublishServiceName = "publish"
+	FeedServiceName    = "feed"
 
 	CPURateLimit float64 = 80.0
 

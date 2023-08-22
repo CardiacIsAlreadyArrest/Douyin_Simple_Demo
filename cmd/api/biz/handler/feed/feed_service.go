@@ -4,23 +4,79 @@ package feed
 
 import (
 	"context"
-	feed "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/model/feed"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler"
+	hfeed "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/model/feed"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/rpc"
+	kfeed "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/feed"
+	"github.com/Yra-A/Douyin_Simple_Demo/pkg/errno"
 	"github.com/cloudwego/hertz/pkg/app"
-	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
 // Feed .
 // @router /douyin/feed [GET]
 func Feed(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req feed.FeedRequest
+	var req hfeed.FeedRequest
 	err = c.BindAndValidate(&req)
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		handler.BadResponse(c, err)
 		return
 	}
 
-	resp := new(feed.FeedResponse)
+	// 可选参数，所以如果 userid 不存在也不返回错误响应
+	if user_id, exist := c.Get("current_user_id"); exist {
+		req.UserID = user_id.(int64)
+	}
 
-	c.JSON(consts.StatusOK, resp)
+	kresp, err := rpc.Feed(context.Background(), &kfeed.FeedRequest{
+		LatestTime: req.LatestTime,
+		Token:      req.Token,
+		UserId:     req.UserID,
+	})
+	if err != nil {
+		handler.BadResponse(c, err)
+		return
+	}
+
+	resp := &hfeed.FeedResponse{
+		StatusCode: errno.SuccessCode,
+		StatusMsg:  &errno.Success.ErrMsg,
+		VideoList:  copyVideo(kresp.VideoList),
+		NextTime:   kresp.NextTime,
+	}
+
+	handler.SendResponse(c, resp)
+}
+
+func copyVideo(kv []*kfeed.Video) (hv []*hfeed.Video) {
+	for _, v := range kv {
+		nv := &hfeed.Video{
+			ID:            v.Id,
+			Author:        copyUser(v.Author),
+			PlayURL:       v.PlayUrl,
+			CoverURL:      v.CoverUrl,
+			FavoriteCount: v.FavoriteCount,
+			CommentCount:  v.CommentCount,
+			IsFavorite:    v.IsFavorite,
+			Title:         v.Title,
+		}
+		hv = append(hv, nv)
+	}
+	return
+}
+
+func copyUser(ku *kfeed.User) *hfeed.User {
+	return &hfeed.User{
+		ID:              ku.Id,
+		Name:            ku.Name,
+		FollowCount:     ku.FollowCount,
+		FollowerCount:   ku.FollowerCount,
+		IsFollow:        ku.IsFollow,
+		Avatar:          ku.Avatar,
+		BackgroundImage: ku.BackgroundImage,
+		Signature:       ku.Signature,
+		TotalFavorited:  ku.TotalFavorited,
+		WorkCount:       ku.WorkCount,
+		FavoriteCount:   ku.FavoriteCount,
+	}
 }
