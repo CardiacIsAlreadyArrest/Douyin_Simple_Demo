@@ -10,44 +10,33 @@ import (
 
 type FeedRequest struct {
 	// 可选参数，限制返回视频的最新投稿时间戳，精确到秒，不填表示当前时间
-	LatestTime *int64 `thrift:"latest_time,1,optional" json:"latest_time,omitempty" query:"latest_time"`
+	LatestTime int64 `thrift:"latest_time,1" json:"latest_time" query:"latest_time"`
 	// 可选参数，登录用户设置
-	Token *string `thrift:"token,2,optional" json:"token,omitempty" query:"token"`
+	Token string `thrift:"token,2" json:"token" query:"token"`
+	// 用户id
+	UserID int64 `thrift:"user_id,3" form:"user_id" json:"user_id" query:"user_id"`
 }
 
 func NewFeedRequest() *FeedRequest {
 	return &FeedRequest{}
 }
 
-var FeedRequest_LatestTime_DEFAULT int64
-
 func (p *FeedRequest) GetLatestTime() (v int64) {
-	if !p.IsSetLatestTime() {
-		return FeedRequest_LatestTime_DEFAULT
-	}
-	return *p.LatestTime
+	return p.LatestTime
 }
 
-var FeedRequest_Token_DEFAULT string
-
 func (p *FeedRequest) GetToken() (v string) {
-	if !p.IsSetToken() {
-		return FeedRequest_Token_DEFAULT
-	}
-	return *p.Token
+	return p.Token
+}
+
+func (p *FeedRequest) GetUserID() (v int64) {
+	return p.UserID
 }
 
 var fieldIDToName_FeedRequest = map[int16]string{
 	1: "latest_time",
 	2: "token",
-}
-
-func (p *FeedRequest) IsSetLatestTime() bool {
-	return p.LatestTime != nil
-}
-
-func (p *FeedRequest) IsSetToken() bool {
-	return p.Token != nil
+	3: "user_id",
 }
 
 func (p *FeedRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -89,6 +78,16 @@ func (p *FeedRequest) Read(iprot thrift.TProtocol) (err error) {
 					goto SkipFieldError
 				}
 			}
+		case 3:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
 		default:
 			if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
@@ -123,7 +122,7 @@ func (p *FeedRequest) ReadField1(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		p.LatestTime = &v
+		p.LatestTime = v
 	}
 	return nil
 }
@@ -132,7 +131,16 @@ func (p *FeedRequest) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Token = &v
+		p.Token = v
+	}
+	return nil
+}
+
+func (p *FeedRequest) ReadField3(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.UserID = v
 	}
 	return nil
 }
@@ -149,6 +157,10 @@ func (p *FeedRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField2(oprot); err != nil {
 			fieldId = 2
+			goto WriteFieldError
+		}
+		if err = p.writeField3(oprot); err != nil {
+			fieldId = 3
 			goto WriteFieldError
 		}
 
@@ -171,16 +183,14 @@ WriteStructEndError:
 }
 
 func (p *FeedRequest) writeField1(oprot thrift.TProtocol) (err error) {
-	if p.IsSetLatestTime() {
-		if err = oprot.WriteFieldBegin("latest_time", thrift.I64, 1); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteI64(*p.LatestTime); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
+	if err = oprot.WriteFieldBegin("latest_time", thrift.I64, 1); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.LatestTime); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
 	}
 	return nil
 WriteFieldBeginError:
@@ -190,22 +200,37 @@ WriteFieldEndError:
 }
 
 func (p *FeedRequest) writeField2(oprot thrift.TProtocol) (err error) {
-	if p.IsSetToken() {
-		if err = oprot.WriteFieldBegin("token", thrift.STRING, 2); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.Token); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
+	if err = oprot.WriteFieldBegin("token", thrift.STRING, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Token); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
 	}
 	return nil
 WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 2 end error: ", p), err)
+}
+
+func (p *FeedRequest) writeField3(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("user_id", thrift.I64, 3); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.UserID); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
 }
 
 func (p *FeedRequest) String() string {
@@ -223,7 +248,7 @@ type FeedResponse struct {
 	// 视频列表
 	VideoList []*Video `thrift:"video_list,3" form:"video_list" json:"video_list" query:"video_list"`
 	// 本次返回的视频中，发布最早的时间，作为下次请求时的latest_time
-	NextTime *int64 `thrift:"next_time,4,optional" form:"next_time" json:"next_time,omitempty" query:"next_time"`
+	NextTime int64 `thrift:"next_time,4" form:"next_time" json:"next_time" query:"next_time"`
 }
 
 func NewFeedResponse() *FeedResponse {
@@ -247,13 +272,8 @@ func (p *FeedResponse) GetVideoList() (v []*Video) {
 	return p.VideoList
 }
 
-var FeedResponse_NextTime_DEFAULT int64
-
 func (p *FeedResponse) GetNextTime() (v int64) {
-	if !p.IsSetNextTime() {
-		return FeedResponse_NextTime_DEFAULT
-	}
-	return *p.NextTime
+	return p.NextTime
 }
 
 var fieldIDToName_FeedResponse = map[int16]string{
@@ -265,10 +285,6 @@ var fieldIDToName_FeedResponse = map[int16]string{
 
 func (p *FeedResponse) IsSetStatusMsg() bool {
 	return p.StatusMsg != nil
-}
-
-func (p *FeedResponse) IsSetNextTime() bool {
-	return p.NextTime != nil
 }
 
 func (p *FeedResponse) Read(iprot thrift.TProtocol) (err error) {
@@ -402,7 +418,7 @@ func (p *FeedResponse) ReadField4(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadI64(); err != nil {
 		return err
 	} else {
-		p.NextTime = &v
+		p.NextTime = v
 	}
 	return nil
 }
@@ -510,16 +526,14 @@ WriteFieldEndError:
 }
 
 func (p *FeedResponse) writeField4(oprot thrift.TProtocol) (err error) {
-	if p.IsSetNextTime() {
-		if err = oprot.WriteFieldBegin("next_time", thrift.I64, 4); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteI64(*p.NextTime); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
+	if err = oprot.WriteFieldBegin("next_time", thrift.I64, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.NextTime); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
 	}
 	return nil
 WriteFieldBeginError:
