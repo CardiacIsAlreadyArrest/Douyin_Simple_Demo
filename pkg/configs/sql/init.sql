@@ -34,3 +34,17 @@ CREATE TABLE `videos` (
   KEY `time` (`publish_time`) USING BTREE,
   KEY `author` (`author_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8 COMMENT='视频表';
+
+
+-- ----------------------------
+-- Table structure for favorite
+-- ----------------------------
+
+DROP TABLE IF EXISTS `favorite`;
+CREATE TABLE `favorite` (
+  `user_id` bigint NOT NULL  COMMENT '用户ID',
+  `video_id` bigint NOT NULL COMMENT '视频id',
+  PRIMARY KEY (`user_id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`),
+  FOREIGN KEY (`video_id`) REFERENCES videos(`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='喜爱表';

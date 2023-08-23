@@ -20,7 +20,7 @@ func (s *FavoriteServiceImpl) FavoriteAction(ctx context.Context, req *favorite.
 		return resp, nil
 	}
 
-	err = service.NewActionFavoriteService(ctx).ActionFavorite(req)
+	err = service.NewFavoriteActionService(ctx).FavoriteAction(req)
 
 	if err != nil {
 		resp.StatusCode = 1

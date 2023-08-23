@@ -9,25 +9,24 @@ import (
 	"gorm.io/gorm"
 )
 
-type User struct {
+type Favorite struct {
 	gorm.Model
 	// Id int64 `gorm:"primaryKey;autoIncrement" json:id`
 	UserId  int64 `json:"user_id"`
 	VideoId int64 `json:"video_id"`
 }
 
-func (u *User) TableName() string {
+func (u *Favorite) TableName() string {
 	return constants.FavoriteTableName
 }
 
 func Delete(ctx context.Context, req *favorite.FavoriteActionRequest) error {
-	return DB.WithContext(ctx).Where("user_id = ? and video_id = ?", req.UserId, req.VideoId).Delete(&User{}).Error
+	return DB.WithContext(ctx).Where("user_id = ? and video_id = ?", req.UserId, req.VideoId).Delete(&Favorite{}).Error
 }
 
 // add favorite
 func Add(ctx context.Context, req *favorite.FavoriteActionRequest) error {
-	var res []*User
-
+	var res []*Favorite
 	//如果存在，不再增加
 	if err := DB.WithContext(ctx).Where("user_id = ? and video_id = ?", req.UserId, req.VideoId).Find(&res).Error; err != nil {
 		fmt.Println("如果存在，不再增加")
@@ -40,7 +39,7 @@ func Add(ctx context.Context, req *favorite.FavoriteActionRequest) error {
 	}
 
 	//如果不存在，增加
-	u := new(User)
+	u := new(Favorite)
 	u.UserId = req.UserId
 	u.VideoId = req.VideoId
 	if err := DB.WithContext(ctx).Create(u).Error; err != nil {
@@ -53,7 +52,7 @@ func Add(ctx context.Context, req *favorite.FavoriteActionRequest) error {
 
 // getlist
 func QueryUsr(ctx context.Context, usrid int64) ([]int64, error) {
-	res := make([]*User, 0)
+	res := make([]*Favorite, 0)
 	if err := DB.WithContext(ctx).Where("user_id = ?", usrid).Find(&res).Error; err != nil {
 		return nil, err
 	}
@@ -74,7 +73,7 @@ func QueryUsr(ctx context.Context, usrid int64) ([]int64, error) {
 func QueryFavoriteCount(ctx context.Context, video_id int64) (int64, error) {
 	var favorite_count int64
 	favorite_count = 0
-	res := make([]*User, 0)
+	res := make([]*Favorite, 0)
 	if err := DB.WithContext(ctx).Where("video_id = ?", video_id).Find(&res).Error; err != nil {
 		fmt.Println("favorite_count:", favorite_count)
 		return favorite_count, err
@@ -87,7 +86,7 @@ func QueryFavoriteCount(ctx context.Context, video_id int64) (int64, error) {
 
 // is_favorite   ueser_id like video_id
 func QueryIsFavorite(ctx context.Context, req *favorite.IsFavoriteRequest) (bool, error) {
-	res := make([]*User, 0)
+	res := make([]*Favorite, 0)
 	DB.WithContext(ctx).Where("user_id = ? and video_id = ?", req.UserId, req.VideoId).Find(&res)
 
 	if len(res) == 0 {

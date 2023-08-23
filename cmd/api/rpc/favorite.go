@@ -65,3 +65,10 @@ func FavoriteList(ctx context.Context, req *favorite.FavoriteListRequest) (*favo
 	fmt.Println("resp.StatusMsg:", resp.StatusMsg)
 	return resp, nil
 }
+func FavoriteCount(ctx context.Context, req *favorite.FavoriteCountRequest) (*favorite.FavoriteCountResponse, error) {
+	resp, err := favoriteClient.FavoriteCount(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

@@ -29,7 +29,7 @@ const (
 const (
 	UserTableName     = "users"
 	VideosTableName   = "videos"
-	FavoriteTableName = "favorites"
+	FavoriteTableName = "favorite"
 
 	SecretKey   = "secret key"
 	IdentityKey = "user id"
@@ -45,6 +45,7 @@ const (
 )
 
 var (
-	MySQLDefaultDSN = "gorm:gorm@tcp(localhost:18000)/test_douyin?charset=utf8&parseTime=True&loc=Local"
-	EtcdAddress     = "localhost:2379"
+	MySQLDefaultDSN = "root:gorm@tcp(host.docker.internal:18000)/test_douyin?charset=utf8&parseTime=True&loc=Local"
+	// MySQLDefaultDSN = "gorm:gorm@tcp(localhost:18000)/test_douyin?charset=utf8&parseTime=True&loc=Local"
+	EtcdAddress = "host.docker.internal:2379"
 )

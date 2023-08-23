@@ -7,18 +7,18 @@ import (
 	"github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/favorite"
 )
 
-type ActionFavoriteService struct {
+type FavoriteActionService struct {
 	ctx context.Context
 }
 
 // NewUploadVideoService new CheckUserService
-func NewActionFavoriteService(ctx context.Context) *ActionFavoriteService {
-	return &ActionFavoriteService{
+func NewFavoriteActionService(ctx context.Context) *FavoriteActionService {
+	return &FavoriteActionService{
 		ctx: ctx,
 	}
 }
 
-func (s *ActionFavoriteService) ActionFavorite(req *favorite.FavoriteActionRequest) error {
+func (s *FavoriteActionService) FavoriteAction(req *favorite.FavoriteActionRequest) error {
 	//1点赞
 	if req.ActionType == 1 {
 		return db.Add(s.ctx, req)

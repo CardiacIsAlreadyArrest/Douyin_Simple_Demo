@@ -95,7 +95,7 @@ func FavoriteCount(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	resp := new(kfavorite.FavoriteCountResponse)
+	resp, _ := rpc.FavoriteCount(context.Background(), &kfavorite.FavoriteCountRequest{VideoId: req.VideoID})
 
 	c.JSON(consts.StatusOK, resp)
 }

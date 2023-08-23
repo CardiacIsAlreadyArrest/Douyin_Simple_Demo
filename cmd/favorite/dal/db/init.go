@@ -34,7 +34,7 @@ func Init() {
 		panic(err)
 	}
 
-	DB.AutoMigrate(&User{})
+	DB.AutoMigrate(&Favorite{})
 
 	if err := DB.Use(tracing.NewPlugin()); err != nil {
 		panic(err)
