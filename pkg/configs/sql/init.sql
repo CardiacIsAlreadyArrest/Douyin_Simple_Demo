@@ -42,9 +42,13 @@ CREATE TABLE `videos` (
 
 DROP TABLE IF EXISTS `favorite`;
 CREATE TABLE `favorite` (
+   `id` int NOT NULL AUTO_INCREMENT,
+    `created_at` datetime,
+    `updated_at` datetime,
+    `deleted_at` datetime,
   `user_id` bigint NOT NULL  COMMENT '用户ID',
   `video_id` bigint NOT NULL COMMENT '视频id',
-  PRIMARY KEY (`user_id`),
+  PRIMARY KEY (`id`),
   FOREIGN KEY (`user_id`) REFERENCES users(`id`),
   FOREIGN KEY (`video_id`) REFERENCES videos(`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='喜爱表';

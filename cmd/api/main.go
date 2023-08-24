@@ -33,7 +33,7 @@ func main() {
 	Init()
 	tracer, cfg := tracing.NewServerTracer()
 	h := server.New(
-		server.WithHostPorts("127.0.0.1:8080"),
+		server.WithHostPorts("127.0.0.1:8899"),
 		tracer,
 	)
 	h.Use(accesslog.New(accesslog.WithFormat("[${time}] ${status} - ${latency} ${method} ${path} ${queryParams} - 【req body: ${body}】【req query parameter: ${queryParams}】【response body: ${resBody}】")))

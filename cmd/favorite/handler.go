@@ -75,15 +75,3 @@ func (s *FavoriteServiceImpl) IsFavorite(ctx context.Context, req *favorite.IsFa
 	resp.IsFavorite, err = service.NewIsFavoriteService(ctx).IsFavorite(req)
 	return resp, err
 }
-
-// ActionFavorite implements the FavoriteServiceImpl interface.
-func (s *FavoriteServiceImpl) ActionFavorite(ctx context.Context, req *favorite.FavoriteActionRequest) (resp *favorite.FavoriteActionResponse, err error) {
-	// TODO: Your code here...
-	return
-}
-
-// ListFavorite implements the FavoriteServiceImpl interface.
-func (s *FavoriteServiceImpl) ListFavorite(ctx context.Context, req *favorite.FavoriteListRequest) (resp *favorite.FavoriteListResponse, err error) {
-	// TODO: Your code here...
-	return
-}

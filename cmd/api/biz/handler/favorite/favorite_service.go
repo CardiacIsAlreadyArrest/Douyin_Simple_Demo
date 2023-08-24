@@ -73,7 +73,7 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 	log.Println("[ypx debug] favorite favorite userid", uid)
 	// v, _ := c.Get(constants.IdentityKey)
 	resp, err := rpc.FavoriteList(context.Background(), &kfavorite.FavoriteListRequest{
-		UserId: req.UserID,
+		UserId: uid,
 		Token:  req.Token,
 	})
 	if err != nil {

@@ -16,7 +16,7 @@ type FavoriteActionRequest struct {
 	// 1-点赞，2-取消点赞
 	ActionType int32 `thrift:"action_type,3" json:"action_type" query:"action_type"`
 	// 用户id
-	UserID int64 `thrift:"user_id,4" json:"user_id" query:"user_id"`
+	UserID int64 `thrift:"user_id,4" form:"user_id" json:"user_id" query:"user_id"`
 }
 
 func NewFavoriteActionRequest() *FavoriteActionRequest {
@@ -485,7 +485,7 @@ func (p *FavoriteActionResponse) String() string {
 
 type FavoriteListRequest struct {
 	// 用户id
-	UserID int64 `thrift:"user_id,1" json:"user_id" query:"user_id"`
+	UserID int64 `thrift:"user_id,1" form:"user_id" json:"user_id" query:"user_id"`
 	// 用户鉴权token
 	Token string `thrift:"token,2" json:"token" query:"token"`
 }
