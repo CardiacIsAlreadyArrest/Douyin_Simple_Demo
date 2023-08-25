@@ -4,18 +4,14 @@ package favorite
 
 import (
 	"context"
-	"encoding/json"
 
 	"log"
 
 	hfavorite "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/model/favorite"
-	mjwt "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/mw/jwt"
 	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/rpc"
 	kfavorite "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/favorite"
-	"github.com/Yra-A/Douyin_Simple_Demo/pkg/constants"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
-	"github.com/hertz-contrib/jwt"
 )
 
 // import (
@@ -65,15 +61,15 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 	}
 
 	uid := int64(0)
-	if token, err := mjwt.JwtMiddleware.ParseTokenString(req.Token); err == nil {
-		claims := jwt.ExtractClaimsFromToken(token)
-		userid, _ := claims[constants.IdentityKey].(json.Number).Int64()
-		uid = userid
-	}
+	// if token, err := mjwt.JwtMiddleware.ParseTokenString(req.Token); err == nil {
+	// 	claims := jwt.ExtractClaimsFromToken(token)
+	// 	userid, _ := claims[constants.IdentityKey].(json.Number).Int64()
+	// 	uid = userid
+	// }
 	log.Println("[ypx debug] favorite favorite userid", uid)
 	// v, _ := c.Get(constants.IdentityKey)
 	resp, err := rpc.FavoriteList(context.Background(), &kfavorite.FavoriteListRequest{
-		UserId: uid,
+		UserId: req.UserID,
 		Token:  req.Token,
 	})
 	if err != nil {

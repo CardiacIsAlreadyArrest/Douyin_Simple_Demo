@@ -3,7 +3,9 @@ package db
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/publish/dal/db"
 	"github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/favorite"
 	"github.com/Yra-A/Douyin_Simple_Demo/pkg/constants"
 	"gorm.io/gorm"
@@ -18,6 +20,20 @@ type Favorite struct {
 
 func (u *Favorite) TableName() string {
 	return constants.FavoriteTableName
+}
+
+type Video struct {
+	gorm.Model
+	ID          int64
+	AuthorID    int64
+	PlayURL     string
+	CoverURL    string
+	PublishTime time.Time
+	Title       string
+}
+
+func (Video) TableName() string {
+	return constants.VideosTableName
 }
 
 func Delete(ctx context.Context, req *favorite.FavoriteActionRequest) error {
@@ -67,6 +83,21 @@ func QueryUsr(ctx context.Context, usrid int64) ([]int64, error) {
 	}
 	fmt.Println()
 	return video_id, nil
+}
+
+func GetVideoListByVideoIDList(ctx context.Context, video_id_list []int64) ([]*db.Video, error) {
+	var video_list []*db.Video
+	var err error
+	for _, item := range video_id_list {
+		var video *db.Video
+		err = DB.WithContext(ctx).Where("id = ?", item).Find(&video).Error
+		if err != nil {
+			return video_list, err
+		}
+		video_list = append(video_list, video)
+	}
+
+	return video_list, err
 }
 
 // favorite_count  videoid  how many people like

@@ -45,7 +45,8 @@ const (
 )
 
 var (
-	MySQLDefaultDSN = "root:gorm@tcp(host.docker.internal:18000)/test_douyin?charset=utf8&parseTime=True&loc=Local"
-	// MySQLDefaultDSN = "gorm:gorm@tcp(localhost:18000)/test_douyin?charset=utf8&parseTime=True&loc=Local"
-	EtcdAddress = "host.docker.internal:2379"
+	// MySQLDefaultDSN = "root:gorm@tcp(host.docker.internal:18000)/test_douyin?charset=utf8&parseTime=True&loc=Local"
+	MySQLDefaultDSN = "gorm:gorm@tcp(localhost:18000)/test_douyin?charset=utf8&parseTime=True&loc=Local"
+	// EtcdAddress = "host.docker.internal:2379"
+	EtcdAddress = "localhost:2379"
 )

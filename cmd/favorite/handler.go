@@ -13,7 +13,7 @@ type FavoriteServiceImpl struct{}
 // ActionFavorite implements the FavoriteServiceImpl interface.
 func (s *FavoriteServiceImpl) FavoriteAction(ctx context.Context, req *favorite.FavoriteActionRequest) (resp *favorite.FavoriteActionResponse, err error) {
 	resp = new(favorite.FavoriteActionResponse)
-
+	resp.StatusMsg = new(string)
 	if req.ActionType <= 0 || req.ActionType >= 3 {
 		resp.StatusCode = 1
 		*resp.StatusMsg = "点赞不合法,action_type只能是1或者2"
@@ -28,13 +28,16 @@ func (s *FavoriteServiceImpl) FavoriteAction(ctx context.Context, req *favorite.
 		return resp, nil
 	}
 	resp.StatusCode = 0
+
 	*resp.StatusMsg = "点赞成功"
+
 	return resp, nil
 }
 
 // FavoriteList implements the FavoriteServiceImpl interface.
 func (s *FavoriteServiceImpl) FavoriteList(ctx context.Context, req *favorite.FavoriteListRequest) (resp *favorite.FavoriteListResponse, err error) {
 	resp = new(favorite.FavoriteListResponse)
+	resp.StatusMsg = new(string)
 	if req.UserId < 0 {
 		resp.StatusCode = 1
 		*resp.StatusMsg = "UserId非法"
