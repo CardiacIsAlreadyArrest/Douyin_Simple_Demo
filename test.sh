@@ -1,1 +1,0 @@
-curl -i -k  -H "Content-type: application/json" -X POST -d '{"user_id=111","video_id=122","action_type=2"}' https://10.10.10.10:80/test
