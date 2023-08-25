@@ -1,6 +1,8 @@
 ## 启动全部服务和 api 层
 run_all:
 	make run_user &
+	make run_publish &
+	make run_feed &
 	make run_api
 
 ## 启动 api 层
@@ -14,6 +16,10 @@ run_user:
 ## 启动 publish 服务
 run_publish:
 	cd cmd/publish && sh ./build.sh && sh ./output/bootstrap.sh
+
+## 启动 feed 服务
+run_feed:
+	cd cmd/feed && sh ./build.sh && sh ./output/bootstrap.sh
 
 
 ## 启动相关服务

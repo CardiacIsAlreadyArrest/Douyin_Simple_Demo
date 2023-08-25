@@ -17,13 +17,13 @@ package constants
 
 // minio
 const (
-	MinioEndPoint        = "localhost:18001" // 对象存储的 URL
-	MinioAccessKeyID     = "douyin"          // 账户 ID
-	MinioSecretAccessKey = "douyin111"       // 账户密码
-	MiniouseSSL          = false             // 不是用 https
-
-	MinioVideoBucketName = "videobucket"
-	MinioImgBucketName   = "imagebucket"
+// MinioEndPoint        = "localhost:18001" // 对象存储的 URL
+// MinioAccessKeyID     = "douyin"          // 账户 ID
+// MinioSecretAccessKey = "douyin111"       // 账户密码
+// MiniouseSSL          = false             // 不是用 https
+//
+// MinioVideoBucketName = "videobucket"
+// MinioImgBucketName   = "imagebucket"
 )
 
 const (
@@ -31,12 +31,14 @@ const (
 	VideosTableName   = "videos"
 	FavoriteTableName = "favorite"
 
+
 	SecretKey   = "secret key"
 	IdentityKey = "user id"
-
-	UserServiceName     = "user"
-	PublishServiceName  = "publish"
 	FavoriteServiceName = "favorite"
+	UserServiceName    = "user"
+	PublishServiceName = "publish"
+	FeedServiceName    = "feed"
+
 
 	CPURateLimit float64 = 80.0
 

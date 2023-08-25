@@ -23,6 +23,7 @@ require (
 )
 
 require (
+	github.com/aliyun/aliyun-oss-go-sdk v2.2.8+incompatible // indirect
 	github.com/andeya/goutil v1.0.0 // indirect
 	github.com/aws/aws-sdk-go v1.38.20 // indirect
 	github.com/bytedance/go-tagexpr/v2 v2.9.6 // indirect
@@ -100,6 +101,7 @@ require (
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.11.0 // indirect
 	golang.org/x/text v0.12.0 // indirect
+	golang.org/x/time v0.0.0-20210220033141-f8bda1e9f3ba // indirect
 	google.golang.org/genproto v0.0.0-20230526203410-71b5a4ffd15e // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20230526203410-71b5a4ffd15e // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20230526203410-71b5a4ffd15e // indirect

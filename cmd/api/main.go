@@ -12,15 +12,6 @@ import (
 	"github.com/hertz-contrib/obs-opentelemetry/tracing"
 )
 
-//
-//// 将对 /src/*name 的访问请求通过反向代理转发到 minio，即转发到 http://localhost:18001/*name
-//func minioReverseProxy(c context.Context, ctx *app.RequestContext) {
-//	proxy, _ := reverseproxy.NewSingleHostReverseProxy("http://localhost:18001")
-//	ctx.URI().SetPath(ctx.Param("name"))
-//	hlog.CtxInfof(c, string(ctx.Request.URI().Path()))
-//	proxy.ServeHTTP(c, ctx)
-//}
-
 func Init() {
 	rpc.InitRPC()
 	jwt.InitJwt()
@@ -33,10 +24,13 @@ func main() {
 	Init()
 	tracer, cfg := tracing.NewServerTracer()
 	h := server.New(
-		server.WithHostPorts("127.0.0.1:8899"),
+
+		server.WithStreamBody(true),
+		//server.WithHostPorts("0.0.0.0:8888"),
 		tracer,
 	)
 	h.Use(accesslog.New(accesslog.WithFormat("[${time}] ${status} - ${latency} ${method} ${path} ${queryParams} - 【req body: ${body}】【req query parameter: ${queryParams}】【response body: ${resBody}】")))
+
 	register(h)
 	h.Use(tracing.ServerMiddleware(cfg))
 	h.Spin()
