@@ -60,6 +60,7 @@ require (
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/kitex-contrib/tracer-opentracing v0.0.3
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.5 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
@@ -108,6 +109,7 @@ require (
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gorm.io/plugin/opentelemetry v0.1.3
 )
 
 replace github.com/apache/thrift => github.com/apache/thrift v0.13.0

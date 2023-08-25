@@ -27,14 +27,18 @@ const (
 )
 
 const (
-	UserTableName   = "users"
-	VideosTableName = "videos"
-	SecretKey       = "secret key"
-	IdentityKey     = "user id"
+	UserTableName     = "users"
+	VideosTableName   = "videos"
+	FavoriteTableName = "favorite"
 
+
+	SecretKey   = "secret key"
+	IdentityKey = "user id"
+	FavoriteServiceName = "favorite"
 	UserServiceName    = "user"
 	PublishServiceName = "publish"
 	FeedServiceName    = "feed"
+
 
 	CPURateLimit float64 = 80.0
 
@@ -43,6 +47,8 @@ const (
 )
 
 var (
+	// MySQLDefaultDSN = "root:gorm@tcp(host.docker.internal:18000)/test_douyin?charset=utf8&parseTime=True&loc=Local"
 	MySQLDefaultDSN = "gorm:gorm@tcp(localhost:18000)/test_douyin?charset=utf8&parseTime=True&loc=Local"
-	EtcdAddress     = "localhost:2379"
+	// EtcdAddress = "host.docker.internal:2379"
+	EtcdAddress = "localhost:2379"
 )

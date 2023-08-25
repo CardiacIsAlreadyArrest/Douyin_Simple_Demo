@@ -24,6 +24,7 @@ func main() {
 	Init()
 	tracer, cfg := tracing.NewServerTracer()
 	h := server.New(
+
 		server.WithStreamBody(true),
 		//server.WithHostPorts("0.0.0.0:8888"),
 		tracer,
