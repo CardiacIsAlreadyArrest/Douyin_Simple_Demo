@@ -36,6 +36,24 @@ CREATE TABLE `videos` (
 ) ENGINE=InnoDB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8 COMMENT='视频表';
 
 
+
+-- ----------------------------
+-- Table structure for favorite
+-- ----------------------------
+
+DROP TABLE IF EXISTS `favorite`;
+CREATE TABLE `favorite` (
+   `id` int NOT NULL AUTO_INCREMENT,
+    `created_at` datetime,
+    `updated_at` datetime,
+    `deleted_at` datetime,
+  `user_id` bigint NOT NULL  COMMENT '用户ID',
+  `video_id` bigint NOT NULL COMMENT '视频id',
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES users(`id`),
+  FOREIGN KEY (`video_id`) REFERENCES videos(`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COMMENT='喜爱表';
+
 -- ----------------------------
 -- Table structure for comments
 -- ----------------------------
@@ -67,3 +85,4 @@ CREATE TABLE `likes` (
  KEY `userIdIdx` (`user_id`) USING BTREE,
  KEY `videoIdx` (`video_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='点赞表';
+
