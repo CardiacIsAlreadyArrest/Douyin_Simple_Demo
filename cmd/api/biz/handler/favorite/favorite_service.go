@@ -4,6 +4,8 @@ package favorite
 
 import (
 	"context"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler"
+	"github.com/Yra-A/Douyin_Simple_Demo/pkg/errno"
 
 	"log"
 
@@ -14,14 +16,6 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
-// import (
-//
-//	"context"
-//
-//	"github.com/cloudwego/hertz/pkg/app"
-//	"github.com/cloudwego/hertz/pkg/protocol/consts"
-//
-// )
 // FavoriteAction .
 // @router /douyin/favorite/action/ [POST]
 func FavoriteAction(ctx context.Context, c *app.RequestContext) {
@@ -33,8 +27,13 @@ func FavoriteAction(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	// resp := new(favorite.FavoriteActionResponse)
-	// v, _ := c.Get(constants.IdentityKey)
+	if user_id, exist := c.Get("current_user_id"); exist {
+		req.UserID = user_id.(int64)
+	} else {
+		handler.BadResponse(c, errno.AuthorizationFailedErr)
+		return
+	}
+
 	resp, err := rpc.FavoriteAction(context.Background(), &kfavorite.FavoriteActionRequest{
 		UserId:     req.UserID,
 		VideoId:    req.VideoID,
@@ -61,13 +60,13 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 	}
 
 	uid := int64(0)
-	// if token, err := mjwt.JwtMiddleware.ParseTokenString(req.Token); err == nil {
-	// 	claims := jwt.ExtractClaimsFromToken(token)
-	// 	userid, _ := claims[constants.IdentityKey].(json.Number).Int64()
-	// 	uid = userid
-	// }
+	if user_id, exist := c.Get("current_user_id"); exist {
+		req.UserID = user_id.(int64)
+	} else {
+		handler.BadResponse(c, errno.AuthorizationFailedErr)
+		return
+	}
 	log.Println("[ypx debug] favorite favorite userid", uid)
-	// v, _ := c.Get(constants.IdentityKey)
 	resp, err := rpc.FavoriteList(context.Background(), &kfavorite.FavoriteListRequest{
 		UserId: req.UserID,
 		Token:  req.Token,
@@ -76,22 +75,6 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 		c.String(consts.StatusInternalServerError, err.Error())
 		return
 	}
-
-	c.JSON(consts.StatusOK, resp)
-}
-
-// FavoriteCount .
-// @router /douyin/favorite/count/ [GET]
-func FavoriteCount(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req hfavorite.FavoriteCountRequest
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
-		return
-	}
-
-	resp, _ := rpc.FavoriteCount(context.Background(), &kfavorite.FavoriteCountRequest{VideoId: req.VideoID})
 
 	c.JSON(consts.StatusOK, resp)
 }

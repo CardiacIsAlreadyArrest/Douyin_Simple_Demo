@@ -54,14 +54,18 @@ struct IsFavoriteRequest {
 }
 
 struct IsFavoriteResponse {
-    1: bool  is_favorite 
+    1: i32 status_code,        // 状态码，0-成功，其他值-失败
+    2: optional string status_msg, // 返回状态描述
+    3: bool  is_favorite
 }
 
 struct FavoriteCountRequest {
     1: i64 video_id  (api.query="video_id")
 }
 struct FavoriteCountResponse {
-    1: i64 favorite_count
+    1: i32 status_code,        // 状态码，0-成功，其他值-失败
+    2: optional string status_msg, // 返回状态描述
+    3: i64 favorite_count
 }
 
 service FavoriteService {
@@ -69,8 +73,8 @@ service FavoriteService {
     FavoriteActionResponse FavoriteAction(1:required FavoriteActionRequest req) (api.post="/douyin/favorite/action/")
     // 获取喜欢列表
     FavoriteListResponse FavoriteList(1:required FavoriteListRequest req) (api.get="/douyin/favorite/list/")
-    // 获取喜欢技术
-    FavoriteCountResponse FavoriteCount(1:FavoriteCountRequest req) (api.get="/douyin/favorite/count/")
+    // 获取喜欢计数
+    FavoriteCountResponse FavoriteCount(1:FavoriteCountRequest req)
     // 是否喜欢
     IsFavoriteResponse IsFavorite(1:IsFavoriteRequest req)
 }
