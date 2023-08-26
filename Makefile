@@ -21,6 +21,10 @@ run_publish:
 run_feed:
 	cd cmd/feed && sh ./build.sh && sh ./output/bootstrap.sh
 
+## 启动 favorite 服务
+run_favorite:
+	cd cmd/favorite && sh ./build.sh && sh ./output/bootstrap.sh
+
 
 ## 启动相关服务
 start:

@@ -26,10 +26,6 @@ func Register(r *server.Hertz) {
 				_action.POST("/", append(_favoriteactionMw(), favorite.FavoriteAction)...)
 			}
 			{
-				_count := _favorite.Group("/count", _countMw()...)
-				_count.GET("/", append(_favoritecountMw(), favorite.FavoriteCount)...)
-			}
-			{
 				_list := _favorite.Group("/list", _listMw()...)
 				_list.GET("/", append(_favoritelistMw(), favorite.FavoriteList)...)
 			}

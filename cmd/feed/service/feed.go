@@ -4,8 +4,12 @@ import (
   "context"
   "fmt"
   "github.com/Yra-A/Douyin_Simple_Demo/cmd/feed/dal/db"
+  "github.com/Yra-A/Douyin_Simple_Demo/cmd/feed/rpc"
+  "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/favorite"
   "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/feed"
   "github.com/Yra-A/Douyin_Simple_Demo/pkg/constants"
+  "github.com/cloudwego/kitex/pkg/klog"
+  "sync"
   "time"
 )
 
@@ -40,14 +44,8 @@ func (s *FeedService) Feed(req *feed.FeedRequest) ([]*feed.Video, int64, error) 
   }
 
   for _, v := range dbVideos {
-    favoriteCount, commentCount, isFavorite, err := getOtherVideoInfo()
-    if err != nil {
-      return nil, 0, err
-    }
-    author, err := getAuthorByUserId(v.AuthorID)
-    if err != nil {
-      return nil, 0, err
-    }
+    favoriteCount, commentCount, isFavorite := s.getOtherVideoInfo(v.ID, req.UserId)
+    author := s.getAuthorByUserId(v.AuthorID)
     nv := &feed.Video{
       Id:            v.ID,
       Author:        author,
@@ -65,18 +63,47 @@ func (s *FeedService) Feed(req *feed.FeedRequest) ([]*feed.Video, int64, error) 
 }
 
 // TODO: 实现获取视频相关信息 (并发获取?)
-func getOtherVideoInfo() (int64, int64, bool, error) {
-  return 0, 0, false, nil
+func (s *FeedService) getOtherVideoInfo(videoID int64, myId int64) (int64, int64, bool) {
+  var favoriteCount int64
+  var commentCount int64
+  var isFavorite bool
+  var wg sync.WaitGroup
+  wg.Add(2)
+
+  // 获取 favorite count
+  go func() {
+    defer wg.Done()
+    resp, err := rpc.FavoriteCount(s.ctx, &favorite.FavoriteCountRequest{VideoId: videoID})
+    favoriteCount = resp.FavoriteCount
+    if err != nil {
+      klog.CtxInfof(s.ctx, "获取 favorite count 出现错误："+err.Error())
+    }
+  }()
+
+  // TODO 获取 comment count
+
+  // 获取 is favorite
+  go func() {
+    defer wg.Done()
+    resp, err := rpc.IsFavorite(s.ctx, &favorite.IsFavoriteRequest{UserId: myId, VideoId: videoID})
+    isFavorite = resp.IsFavorite
+    if err != nil {
+      klog.CtxInfof(s.ctx, "获取 is favorite 出现错误："+err.Error())
+    }
+  }()
+
+  wg.Wait()
+
+  return favoriteCount, commentCount, isFavorite
 }
 
 // TODO: 实现 rpc.GetUser
-func getAuthorByUserId(userId int64) (*feed.User, error) {
+func (s *FeedService) getAuthorByUserId(userId int64) *feed.User {
   var author *feed.User
-  var err error
 
   //userAuthor, err = rpc.GetUser(context.Background(), &user.UserInfoRequest{
   //	UserId: v.AuthorID,
   //	Token:  req.Token,
   //})
-  return author, err
+  return author
 }
