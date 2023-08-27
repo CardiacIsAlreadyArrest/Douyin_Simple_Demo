@@ -23,7 +23,7 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	// 可选参数，所以如果 userid 不存在也不返回错误响应
+	// 可选参数，所以如果 UserId 不存在也不返回错误响应
 	if user_id, exist := c.Get("current_user_id"); exist {
 		req.UserID = user_id.(int64)
 	}

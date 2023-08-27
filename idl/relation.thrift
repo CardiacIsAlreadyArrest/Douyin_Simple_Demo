@@ -60,7 +60,7 @@ struct User {
 
 struct FriendUser {
     1: User base,
-    2: optional string message,    // 和该好友的最新聊天消息
+    2: string message,    // 和该好友的最新聊天消息
     3: i64 msgType                 // message消息的类型，0 => 当前请求用户接收的消息， 1 => 当前请求用户发送的消息
 }
 

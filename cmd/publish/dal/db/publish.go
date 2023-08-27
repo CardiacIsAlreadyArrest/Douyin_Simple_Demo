@@ -54,7 +54,7 @@ func GetVideosByLastTime(lastTime time.Time) ([]*Video, error) {
 	return videos, nil
 }
 
-func GetVideoByUserID(user_id int64) ([]*Video, error) {
+func GetVideoByUserId(user_id int64) ([]*Video, error) {
 	var videos []*Video
 	err := DB.Where("author_id = ?", user_id).Find(&videos).Error
 	if err != nil {

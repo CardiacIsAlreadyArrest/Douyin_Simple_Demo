@@ -16,6 +16,7 @@
 package main
 
 import (
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/user/rpc"
 	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	"net"
 
@@ -37,6 +38,7 @@ func Init() {
 	klog.SetLogger(kitexlogrus.NewLogger())
 	klog.SetLevel(klog.LevelDebug)
 	dal.Init()
+	rpc.InitRPC()
 }
 
 func main() {

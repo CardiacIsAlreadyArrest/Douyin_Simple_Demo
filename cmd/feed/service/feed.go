@@ -7,6 +7,7 @@ import (
   "github.com/Yra-A/Douyin_Simple_Demo/cmd/feed/rpc"
   "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/favorite"
   "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/feed"
+  "github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/user"
   "github.com/Yra-A/Douyin_Simple_Demo/pkg/constants"
   "github.com/cloudwego/kitex/pkg/klog"
   "sync"
@@ -97,13 +98,25 @@ func (s *FeedService) getOtherVideoInfo(videoID int64, myId int64) (int64, int64
   return favoriteCount, commentCount, isFavorite
 }
 
-// TODO: 实现 rpc.GetUser
-func (s *FeedService) getAuthorByUserId(userId int64) *feed.User {
-  var author *feed.User
+func (s *FeedService) getAuthorByUserId(UserId int64) *feed.User {
+  u, err := rpc.GetUser(context.Background(), &user.UserInfoRequest{
+    UserId: UserId,
+  })
+  if err != nil {
+    klog.CtxInfof(s.ctx, "获取视频的 Author 出现错误："+err.Error())
 
-  //userAuthor, err = rpc.GetUser(context.Background(), &user.UserInfoRequest{
-  //	UserId: v.AuthorID,
-  //	Token:  req.Token,
-  //})
-  return author
+  }
+  return &feed.User{
+    Id:              u.Id,
+    Name:            u.Name,
+    FollowCount:     u.FollowCount,
+    FollowerCount:   u.FollowerCount,
+    IsFollow:        u.IsFollow,
+    Avatar:          u.Avatar,
+    BackgroundImage: u.BackgroundImage,
+    Signature:       u.Signature,
+    TotalFavorited:  u.TotalFavorited,
+    WorkCount:       u.WorkCount,
+    FavoriteCount:   u.FavoriteCount,
+  }
 }
