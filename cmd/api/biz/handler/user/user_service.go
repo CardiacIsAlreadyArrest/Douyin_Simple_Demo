@@ -17,93 +17,95 @@ import (
 // UserRegister .
 // @router /douyin/user/register/ [POST]
 func UserRegister(ctx context.Context, c *app.RequestContext) {
-  var req huser.UserRegisterRequest
-  if err := c.BindAndValidate(&req); err != nil {
-    handler.BadResponse(c, errno.ConvertErr(err))
-    return
-  }
-  if len(req.Username) == 0 || len(req.Password) == 0 {
-    handler.BadResponse(c, errno.ParamErr)
-    return
-  }
-  if _, err := rpc.UserRegister(context.Background(), &kuser.UserRegisterRequest{
-    Username: req.Username,
-    Password: req.Password,
-  }); err != nil {
-    handler.BadResponse(c, errno.ConvertErr(err))
-    return
-  }
-  jwt.JwtMiddleware.LoginHandler(ctx, c)
-  v, _ := c.Get("user_id")
-  user_id := v.(int64)
-  token := c.GetString("token")
+	var req huser.UserRegisterRequest
+	if err := c.BindAndValidate(&req); err != nil {
+		handler.BadResponse(c, errno.ConvertErr(err))
+		return
+	}
+	if len(req.Username) == 0 || len(req.Password) == 0 {
+		handler.BadResponse(c, errno.ParamErr)
+		return
+	}
+	if _, err := rpc.UserRegister(context.Background(), &kuser.UserRegisterRequest{
+		Username: req.Username,
+		Password: req.Password,
+	}); err != nil {
+		handler.BadResponse(c, errno.ConvertErr(err))
+		return
+	}
+	jwt.JwtMiddleware.LoginHandler(ctx, c)
+	v, _ := c.Get("user_id")
+	user_id := v.(int64)
+	token := c.GetString("token")
 
-  handler.SendResponse(c, utils.H{
-    "status_code": errno.Success.ErrCode,
-    "status_msg":  errno.Success.ErrMsg,
-    "user_id":     user_id,
-    "token":       token,
-  })
+	handler.SendResponse(c, utils.H{
+		"status_code": errno.Success.ErrCode,
+		"status_msg":  errno.Success.ErrMsg,
+		"user_id":     user_id,
+		"token":       token,
+	})
 }
 
 // UserLogin .
 // @router /douyin/user/login/ [POST]
 func UserLogin(ctx context.Context, c *app.RequestContext) {
-  jwt.JwtMiddleware.LoginHandler(ctx, c)
-  v, ok := c.Get("user_id")
-  if !ok {
-    handler.BadResponse(c, errno.LoginFailedErr)
-    return
-  }
-  user_id := v.(int64)
-  token := c.GetString("token")
+	jwt.JwtMiddleware.LoginHandler(ctx, c)
+	v, ok := c.Get("user_id")
+	if !ok {
+		handler.BadResponse(c, errno.LoginFailedErr)
+		return
+	}
+	user_id := v.(int64)
+	token := c.GetString("token")
 
-  handler.SendResponse(c, utils.H{
-    "status_code": errno.Success.ErrCode,
-    "status_msg":  errno.Success.ErrMsg,
-    "user_id":     user_id,
-    "token":       token,
-  })
+	handler.SendResponse(c, utils.H{
+		"status_code": errno.Success.ErrCode,
+		"status_msg":  errno.Success.ErrMsg,
+		"user_id":     user_id,
+		"token":       token,
+	})
 }
 
 // UserInfo .
 // @router /douyin/user/ [GET]
 func UserInfo(ctx context.Context, c *app.RequestContext) {
-  var req huser.UserInfoRequest
-  if err := c.BindAndValidate(&req); err != nil {
-    handler.BadResponse(c, errno.ConvertErr(err))
-    return
-  }
+	var req huser.UserInfoRequest
+	if err := c.BindAndValidate(&req); err != nil {
+		handler.BadResponse(c, errno.ConvertErr(err))
+		return
+	}
 
-  if user_id, exist := c.Get("current_user_id"); exist {
-    req.UserID = user_id.(int64)
-  }
+	if user_id, exist := c.Get("current_user_id"); exist {
+		req.UserID = user_id.(int64)
+	} else {
+		handler.BadResponse(c, errno.AuthorizationFailedErr)
+		return
+	}
 
-  u, err := rpc.UserInfo(context.Background(), &kuser.UserInfoRequest{
-    UserId: req.UserID,
-  })
-  if err != nil {
-    handler.BadResponse(c, errno.ConvertErr(err))
-    return
-  }
-  resp := huser.UserInfoResponse{
-    StatusCode: errno.SuccessCode,
-    StatusMsg:  &errno.Success.ErrMsg,
-    User: &huser.User{
-      ID:   req.UserID,
-      Name: u.User.Name,
-
-      // TODO 待其他模块完善后补全
-      FollowCount:     nil,
-      FollowerCount:   nil,
-      IsFollow:        false,
-      Avatar:          nil,
-      BackgroundImage: nil,
-      Signature:       nil,
-      TotalFavorited:  nil,
-      WorkCount:       nil,
-      FavoriteCount:   nil,
-    },
-  }
-  handler.SendResponse(c, resp)
+	kresp, err := rpc.UserInfo(context.Background(), &kuser.UserInfoRequest{
+		UserId: req.UserID,
+	})
+	if err != nil {
+		handler.BadResponse(c, errno.ConvertErr(err))
+		return
+	}
+	u := kresp.User
+	resp := huser.UserInfoResponse{
+		StatusCode: errno.SuccessCode,
+		StatusMsg:  &errno.Success.ErrMsg,
+		User: &huser.User{
+			ID:              u.Id,
+			Name:            u.Name,
+			FollowCount:     u.FollowCount,
+			FollowerCount:   u.FollowerCount,
+			IsFollow:        u.IsFollow,
+			Avatar:          u.Avatar,
+			BackgroundImage: u.BackgroundImage,
+			Signature:       u.Signature,
+			TotalFavorited:  u.TotalFavorited,
+			WorkCount:       u.WorkCount,
+			FavoriteCount:   u.FavoriteCount,
+		},
+	}
+	handler.SendResponse(c, resp)
 }

@@ -68,14 +68,25 @@ func (s *UserServiceImpl) UserLogin(ctx context.Context, req *user.UserLoginRequ
 
 // UserInfo implements the UserServiceImpl interface.
 func (s *UserServiceImpl) UserInfo(ctx context.Context, req *user.UserInfoRequest) (resp *user.UserInfoResponse, err error) {
-	klog.CtxDebugf(ctx, "UserLogin called: uid is %s", req.GetUserId())
+	klog.CtxDebugf(ctx, "UserInfo called: uid is %s", req.UserId)
 	resp = new(user.UserInfoResponse)
-
-	// TODO： 带其他模块完成后补全，暂时返回一个空用户信息
+	u, err := service.NewQueryUserService(ctx).QueryUser(req.UserId)
 	resp = &user.UserInfoResponse{
 		StatusCode: errno.SuccessCode,
 		StatusMsg:  &errno.Success.ErrMsg,
-		User:       nil,
+		User: &user.User{
+			Id:              req.UserId,
+			Name:            u.Name,
+			FollowCount:     u.FollowCount,
+			FollowerCount:   u.FollowerCount,
+			IsFollow:        u.IsFollow,
+			Avatar:          u.Avatar,
+			BackgroundImage: u.BackgroundImage,
+			Signature:       u.Signature,
+			TotalFavorited:  u.TotalFavorited,
+			WorkCount:       u.WorkCount,
+			FavoriteCount:   u.FavoriteCount,
+		},
 	}
 	return resp, nil
 }
