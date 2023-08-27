@@ -3051,9 +3051,9 @@ func (p *User) Field11DeepEqual(src *int64) bool {
 }
 
 type FriendUser struct {
-	Base    *User   `thrift:"base,1" frugal:"1,default,User" json:"base"`
-	Message *string `thrift:"message,2,optional" frugal:"2,optional,string" json:"message,omitempty"`
-	MsgType int64   `thrift:"msgType,3" frugal:"3,default,i64" json:"msgType"`
+	Base    *User  `thrift:"base,1" frugal:"1,default,User" json:"base"`
+	Message string `thrift:"message,2" frugal:"2,default,string" json:"message"`
+	MsgType int64  `thrift:"msgType,3" frugal:"3,default,i64" json:"msgType"`
 }
 
 func NewFriendUser() *FriendUser {
@@ -3073,13 +3073,8 @@ func (p *FriendUser) GetBase() (v *User) {
 	return p.Base
 }
 
-var FriendUser_Message_DEFAULT string
-
 func (p *FriendUser) GetMessage() (v string) {
-	if !p.IsSetMessage() {
-		return FriendUser_Message_DEFAULT
-	}
-	return *p.Message
+	return p.Message
 }
 
 func (p *FriendUser) GetMsgType() (v int64) {
@@ -3088,7 +3083,7 @@ func (p *FriendUser) GetMsgType() (v int64) {
 func (p *FriendUser) SetBase(val *User) {
 	p.Base = val
 }
-func (p *FriendUser) SetMessage(val *string) {
+func (p *FriendUser) SetMessage(val string) {
 	p.Message = val
 }
 func (p *FriendUser) SetMsgType(val int64) {
@@ -3103,10 +3098,6 @@ var fieldIDToName_FriendUser = map[int16]string{
 
 func (p *FriendUser) IsSetBase() bool {
 	return p.Base != nil
-}
-
-func (p *FriendUser) IsSetMessage() bool {
-	return p.Message != nil
 }
 
 func (p *FriendUser) Read(iprot thrift.TProtocol) (err error) {
@@ -3200,7 +3191,7 @@ func (p *FriendUser) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Message = &v
+		p.Message = v
 	}
 	return nil
 }
@@ -3269,16 +3260,14 @@ WriteFieldEndError:
 }
 
 func (p *FriendUser) writeField2(oprot thrift.TProtocol) (err error) {
-	if p.IsSetMessage() {
-		if err = oprot.WriteFieldBegin("message", thrift.STRING, 2); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.Message); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
+	if err = oprot.WriteFieldBegin("message", thrift.STRING, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Message); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
 	}
 	return nil
 WriteFieldBeginError:
@@ -3336,14 +3325,9 @@ func (p *FriendUser) Field1DeepEqual(src *User) bool {
 	}
 	return true
 }
-func (p *FriendUser) Field2DeepEqual(src *string) bool {
+func (p *FriendUser) Field2DeepEqual(src string) bool {
 
-	if p.Message == src {
-		return true
-	} else if p.Message == nil || src == nil {
-		return false
-	}
-	if strings.Compare(*p.Message, *src) != 0 {
+	if strings.Compare(p.Message, src) != 0 {
 		return false
 	}
 	return true

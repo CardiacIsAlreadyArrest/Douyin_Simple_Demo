@@ -66,7 +66,7 @@ func FavoriteList(ctx context.Context, c *app.RequestContext) {
 		handler.BadResponse(c, errno.AuthorizationFailedErr)
 		return
 	}
-	log.Println("[ypx debug] favorite favorite userid", uid)
+	log.Println("[ypx debug] favorite favorite UserId", uid)
 	resp, err := rpc.FavoriteList(context.Background(), &kfavorite.FavoriteListRequest{
 		UserId: req.UserID,
 		Token:  req.Token,

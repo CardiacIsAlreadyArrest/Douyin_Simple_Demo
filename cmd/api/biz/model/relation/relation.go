@@ -2476,7 +2476,7 @@ func (p *User) String() string {
 type FriendUser struct {
 	Base *User `thrift:"base,1" form:"base" json:"base" query:"base"`
 	// 和该好友的最新聊天消息
-	Message *string `thrift:"message,2,optional" form:"message" json:"message,omitempty" query:"message"`
+	Message string `thrift:"message,2" form:"message" json:"message" query:"message"`
 	// message消息的类型，0 => 当前请求用户接收的消息， 1 => 当前请求用户发送的消息
 	MsgType int64 `thrift:"msgType,3" form:"msgType" json:"msgType" query:"msgType"`
 }
@@ -2494,13 +2494,8 @@ func (p *FriendUser) GetBase() (v *User) {
 	return p.Base
 }
 
-var FriendUser_Message_DEFAULT string
-
 func (p *FriendUser) GetMessage() (v string) {
-	if !p.IsSetMessage() {
-		return FriendUser_Message_DEFAULT
-	}
-	return *p.Message
+	return p.Message
 }
 
 func (p *FriendUser) GetMsgType() (v int64) {
@@ -2515,10 +2510,6 @@ var fieldIDToName_FriendUser = map[int16]string{
 
 func (p *FriendUser) IsSetBase() bool {
 	return p.Base != nil
-}
-
-func (p *FriendUser) IsSetMessage() bool {
-	return p.Message != nil
 }
 
 func (p *FriendUser) Read(iprot thrift.TProtocol) (err error) {
@@ -2612,7 +2603,7 @@ func (p *FriendUser) ReadField2(iprot thrift.TProtocol) error {
 	if v, err := iprot.ReadString(); err != nil {
 		return err
 	} else {
-		p.Message = &v
+		p.Message = v
 	}
 	return nil
 }
@@ -2681,16 +2672,14 @@ WriteFieldEndError:
 }
 
 func (p *FriendUser) writeField2(oprot thrift.TProtocol) (err error) {
-	if p.IsSetMessage() {
-		if err = oprot.WriteFieldBegin("message", thrift.STRING, 2); err != nil {
-			goto WriteFieldBeginError
-		}
-		if err := oprot.WriteString(*p.Message); err != nil {
-			return err
-		}
-		if err = oprot.WriteFieldEnd(); err != nil {
-			goto WriteFieldEndError
-		}
+	if err = oprot.WriteFieldBegin("message", thrift.STRING, 2); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteString(p.Message); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
 	}
 	return nil
 WriteFieldBeginError:

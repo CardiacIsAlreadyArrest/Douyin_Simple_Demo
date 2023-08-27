@@ -2473,7 +2473,8 @@ func (p *FriendUser) FastReadField2(buf []byte) (int, error) {
 		return offset, err
 	} else {
 		offset += l
-		p.Message = &v
+
+		p.Message = v
 
 	}
 	return offset, nil
@@ -2534,12 +2535,10 @@ func (p *FriendUser) fastWriteField1(buf []byte, binaryWriter bthrift.BinaryWrit
 
 func (p *FriendUser) fastWriteField2(buf []byte, binaryWriter bthrift.BinaryWriter) int {
 	offset := 0
-	if p.IsSetMessage() {
-		offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "message", thrift.STRING, 2)
-		offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, *p.Message)
+	offset += bthrift.Binary.WriteFieldBegin(buf[offset:], "message", thrift.STRING, 2)
+	offset += bthrift.Binary.WriteStringNocopy(buf[offset:], binaryWriter, p.Message)
 
-		offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
-	}
+	offset += bthrift.Binary.WriteFieldEnd(buf[offset:])
 	return offset
 }
 
@@ -2562,12 +2561,10 @@ func (p *FriendUser) field1Length() int {
 
 func (p *FriendUser) field2Length() int {
 	l := 0
-	if p.IsSetMessage() {
-		l += bthrift.Binary.FieldBeginLength("message", thrift.STRING, 2)
-		l += bthrift.Binary.StringLengthNocopy(*p.Message)
+	l += bthrift.Binary.FieldBeginLength("message", thrift.STRING, 2)
+	l += bthrift.Binary.StringLengthNocopy(p.Message)
 
-		l += bthrift.Binary.FieldEndLength()
-	}
+	l += bthrift.Binary.FieldEndLength()
 	return l
 }
 

@@ -80,7 +80,7 @@ func InitJwt() {
 		IdentityKey: constants.IdentityKey,
 
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			// 将 userid 存入 token 的负载部分
+			// 将 UserId 存入 token 的负载部分
 			//fmt.Println("PayloadFunc 中", data, reflect.TypeOf(data))
 			if v, ok := data.(int64); ok {
 				return jwt.MapClaims{

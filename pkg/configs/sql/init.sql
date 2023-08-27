@@ -81,8 +81,8 @@ CREATE TABLE `likes` (
  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '点赞创建时间',
  `deleted_at` timestamp NULL DEFAULT NULL COMMENT '点赞删除时间',
  PRIMARY KEY (`id`),
- KEY `userIdtoVideoIdIdx` (`user_id`,`video_id`) USING BTREE,
- KEY `userIdIdx` (`user_id`) USING BTREE,
+ KEY `UserIdtoVideoIdIdx` (`user_id`,`video_id`) USING BTREE,
+ KEY `UserIdIdx` (`user_id`) USING BTREE,
  KEY `videoIdx` (`video_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='点赞表';
 
