@@ -2,22 +2,23 @@ package rpc
 
 import (
 	"context"
+	"github.com/Yra-A/Douyin_Simple_Demo/pkg/middleware"
+	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	"time"
 
 	"github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/publish"
 	"github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/publish/publishservice"
 	"github.com/Yra-A/Douyin_Simple_Demo/pkg/constants"
-	"github.com/Yra-A/Douyin_Simple_Demo/pkg/middleware"
+	"github.com/Yra-A/Douyin_Simple_Demo/pkg/errno"
 	"github.com/cloudwego/kitex/client"
 	"github.com/cloudwego/kitex/pkg/retry"
 	etcd "github.com/kitex-contrib/registry-etcd"
-	trace "github.com/kitex-contrib/tracer-opentracing"
 )
 
 var publishClient publishservice.Client
 
-func initPublish() {
-	r, err := etcd.NewEtcdResolver([]string{constants.EtcdAddress})
+func initPublishRpc() {
+	r, err := etcd.NewEtcdResolver([]string{constants.EtcdAddress}) // 服务发现
 	if err != nil {
 		panic(err)
 	}
@@ -30,7 +31,7 @@ func initPublish() {
 		client.WithRPCTimeout(3*time.Second),              // rpc timeout
 		client.WithConnectTimeout(50*time.Millisecond),    // conn timeout
 		client.WithFailureRetry(retry.NewFailurePolicy()), // retry
-		client.WithSuite(trace.NewDefaultClientSuite()),   // tracer
+		client.WithSuite(tracing.NewClientSuite()),        // tracer
 		client.WithResolver(r),                            // resolver
 	)
 	if err != nil {
@@ -39,10 +40,14 @@ func initPublish() {
 	publishClient = c
 }
 
-func PublishIds2List(ctx context.Context, req *publish.PublishListRequest) (*publish.PublishListResponse, error) {
-	resp, err := publishClient.PublishList(ctx, req)
+// GetVideoList 根据视频 id 列表获取视频列表【rpc 客户端】
+func GetVideoList(ctx context.Context, req *publish.GetVideoListRequest) (*publish.GetVideoListResponse, error) {
+	resp, err := publishClient.GetVideoList(ctx, req)
 	if err != nil {
-		return nil, err
+		return resp, err
+	}
+	if resp.StatusCode != 0 {
+		return resp, errno.NewErrNo(int64(resp.StatusCode), *resp.StatusMsg)
 	}
 	return resp, nil
 }
