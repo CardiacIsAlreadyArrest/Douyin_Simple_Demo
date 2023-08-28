@@ -21,6 +21,7 @@ func NewServiceInfo() *kitex.ServiceInfo {
 	methods := map[string]kitex.MethodInfo{
 		"PublishAction": kitex.NewMethodInfo(publishActionHandler, newPublishServicePublishActionArgs, newPublishServicePublishActionResult, false),
 		"PublishList":   kitex.NewMethodInfo(publishListHandler, newPublishServicePublishListArgs, newPublishServicePublishListResult, false),
+		"GetVideoList":  kitex.NewMethodInfo(getVideoListHandler, newPublishServiceGetVideoListArgs, newPublishServiceGetVideoListResult, false),
 	}
 	extra := map[string]interface{}{
 		"PackageName": "publish",
@@ -72,6 +73,24 @@ func newPublishServicePublishListResult() interface{} {
 	return publish.NewPublishServicePublishListResult()
 }
 
+func getVideoListHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*publish.PublishServiceGetVideoListArgs)
+	realResult := result.(*publish.PublishServiceGetVideoListResult)
+	success, err := handler.(publish.PublishService).GetVideoList(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newPublishServiceGetVideoListArgs() interface{} {
+	return publish.NewPublishServiceGetVideoListArgs()
+}
+
+func newPublishServiceGetVideoListResult() interface{} {
+	return publish.NewPublishServiceGetVideoListResult()
+}
+
 type kClient struct {
 	c client.Client
 }
@@ -97,6 +116,16 @@ func (p *kClient) PublishList(ctx context.Context, req *publish.PublishListReque
 	_args.Req = req
 	var _result publish.PublishServicePublishListResult
 	if err = p.c.Call(ctx, "PublishList", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) GetVideoList(ctx context.Context, req *publish.GetVideoListRequest) (r *publish.GetVideoListResponse, err error) {
+	var _args publish.PublishServiceGetVideoListArgs
+	_args.Req = req
+	var _result publish.PublishServiceGetVideoListResult
+	if err = p.c.Call(ctx, "GetVideoList", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

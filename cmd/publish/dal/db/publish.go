@@ -45,15 +45,6 @@ func CreateVideo(video *Video) (int64, error) {
 	return video.ID, err
 }
 
-func GetVideosByLastTime(lastTime time.Time) ([]*Video, error) {
-	videos := make([]*Video, constants.MaxFeedCount)
-	err := DB.Where("publish_time < ?", lastTime).Order("publish_time desc").Limit(constants.MaxFeedCount).Find(&videos).Error
-	if err != nil {
-		return videos, err
-	}
-	return videos, nil
-}
-
 func GetVideoByUserId(user_id int64) ([]*Video, error) {
 	var videos []*Video
 	err := DB.Where("author_id = ?", user_id).Find(&videos).Error
@@ -63,39 +54,16 @@ func GetVideoByUserId(user_id int64) ([]*Video, error) {
 	return videos, err
 }
 
-func GetVideoListByVideoIDList(video_id_list []int64) ([]*Video, error) {
+func GetVideoListByVideoIDList(videoIds []int64) ([]*Video, error) {
 	var video_list []*Video
 	var err error
-	for _, item := range video_id_list {
+	for _, id := range videoIds {
 		var video *Video
-		err = DB.Where("id = ?", item).Find(&video).Error
-		if err != nil {
+
+		if err := DB.Where("id = ?", id).Find(&video).Error; err != nil {
 			return video_list, err
 		}
 		video_list = append(video_list, video)
 	}
-
 	return video_list, err
-}
-
-// GetWorkCount get the num of video published by the user
-func GetWorkCount(user_id int64) (int64, error) {
-	var count int64
-	err := DB.Model(&Video{}).Where("author_id = ?", user_id).Count(&count).Error
-	if err != nil {
-		return 0, err
-	}
-	return count, nil
-}
-
-// CheckVideoExistById query if video exist
-func CheckVideoExistById(video_id int64) (bool, error) {
-	var video Video
-	if err := DB.Where("id = ?", video_id).Find(&video).Error; err != nil {
-		return false, err
-	}
-	if video == (Video{}) {
-		return false, nil
-	}
-	return true, nil
 }

@@ -48,9 +48,22 @@ struct User {
     11: i64 favorite_count  // 点赞数量
 }
 
+struct GetVideoListRequest {
+    1: list<i64> video_ids // 视频 id 列表
+    2: i64 user_id         // 操作者 id
+}
+
+struct GetVideoListResponse {
+    1: i32 status_code,              // 状态码，0-成功，其他值-失败
+    2: optional string status_msg    // 返回状态描述
+    3: list<Video> video_list        // 视频列表
+}
+
 service PublishService {
     // 视频投稿操作
     PublishActionResponse PublishAction(1: PublishActionRequest req) (api.post="/douyin/publish/action/")
     // 获取发布列表，列出用户所有投稿过的视频
     PublishListResponse PublishList(1: PublishListRequest req) (api.get="/douyin/publish/list/")
+    // 根据 video ids 获取 video 列表
+    GetVideoListResponse GetVideoList(1: GetVideoListRequest req)
 }
