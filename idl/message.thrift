@@ -5,6 +5,7 @@ struct MessageChatRequest {
     1: string token,             // 用户鉴权token
     2: i64 to_user_id,           // 对方用户id
     3: i64 pre_msg_time          // 上次最新消息的时间（新增字段-apk更新中）
+    4: i64 user_id               // 用户id
 }
 
 struct MessageChatResponse {

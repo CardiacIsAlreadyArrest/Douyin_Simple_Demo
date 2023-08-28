@@ -4,6 +4,7 @@ struct RelationActionRequest {
     1: string token,              // 用户鉴权token
     2: i64 to_user_id,            // 对方用户id
     3: i32 action_type            // 1-关注，2-取消关注
+    4: i64 user_id                // 用户id
 }
 
 struct RelationActionResponse {
@@ -14,17 +15,21 @@ struct RelationActionResponse {
 struct RelationFollowListRequest {
     1: i64 user_id,               // 用户id
     2: string token               // 用户鉴权token
+    3: i64 m_user_id             // 目标用户id
 }
 
 struct RelationFollowListResponse {
     1: i32 status_code,           // 状态码，0-成功，其他值-失败
     2: optional string status_msg // 返回状态描述
     3: list<User> user_list       // 用户信息列表
+    4: i64 m_user_id             // 目标用户id
+
 }
 
 struct RelationFollowerListRequest {
     1: i64 user_id,               // 用户id
     2: string token               // 用户鉴权token
+    3: i64 m_user_id             // 目标用户id
 }
 
 struct RelationFollowerListResponse {
@@ -36,12 +41,35 @@ struct RelationFollowerListResponse {
 struct RelationFriendListRequest {
     1: i64 user_id,               // 用户id
     2: string token               // 用户鉴权token
+    3: i64 m_user_id             // 目标用户id
 }
 
 struct RelationFriendListResponse {
     1: i32 status_code,           // 状态码，0-成功，其他值-失败
     2: optional string status_msg // 返回状态描述
-    3: list<FriendUser> user_list // 用户列表
+    3: list<User> user_list // 用户列表
+}
+
+struct RelationFollowCountRequest {
+    1: i64 user_id,               // 用户id
+}
+
+struct RelationFollowCountResponse {
+    1: i32 status_code,           // 状态码，0-成功，其他值-失败
+    2: optional string status_msg // 返回状态描述
+    3: i64 follow_count           // 关注总数
+}
+
+// 是否关注
+struct RelationIsFollowRequest {
+	1: i64 user_id
+    2: i64 to_user_id
+}
+
+struct RelationIsFollowResponse {
+    1: i32 status_code
+    2: string status_msg
+    3: bool is_follow
 }
 
 struct User {
