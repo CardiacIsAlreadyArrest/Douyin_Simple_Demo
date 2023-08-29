@@ -5,7 +5,9 @@ import (
 	"log"
 
 	"github.com/Yra-A/Douyin_Simple_Demo/cmd/favorite/dal/db"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/favorite/rpc"
 	"github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/favorite"
+	"github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/publish"
 )
 
 type FavoriteListService struct {
@@ -28,14 +30,14 @@ func (s *FavoriteListService) FavoriteList(req *favorite.FavoriteListRequest) ([
 		log.Println("FavoriteList : video_ids is blank")
 	}
 
-	// temp, err := rpc.PublishIds2List(s.ctx, &publish.PublishListRequest{UserId: req.UserId, Token: req.Token})
-	// temp, err := db.GetVideoListByVideoIDList(s.ctx, video_ids)
+	temp, err := rpc.GetVideoList(s.ctx, &publish.GetVideoListRequest{UserId: req.UserId, VideoIds: video_ids})
+
 	var resp []*favorite.Video
-	// for _, a := range temp {
-	// 	b := &favorite.Video{Id: a.ID, Author: (*favorite.User)(a.AuthorID), PlayUrl: a.PlayURL, CoverUrl: a.CoverURL, FavoriteCount: a., IsFavorite: a.IsFavorite, Title: a.Title}
-	// 	resp = append(resp, b)
-	// }
+	for _, a := range temp.VideoList {
+		b := &favorite.Video{Id: a.Id, Author: (*favorite.User)(a.Author), PlayUrl: a.PlayUrl, CoverUrl: a.CoverUrl, FavoriteCount: a.FavoriteCount, IsFavorite: a.IsFavorite, CommentCount: a.CommentCount, Title: a.Title}
+		resp = append(resp, b)
+	}
 	// todo:等一个User的id->user和publish的videoID->video
 
-	return resp, nil
+	return resp, err
 }
