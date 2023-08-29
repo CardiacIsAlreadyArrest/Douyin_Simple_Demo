@@ -122,3 +122,19 @@ func QueryFollowerCount(ctx context.Context, userId int64) (int64, error) {
 
 	return resp, nil
 }
+
+// QueryIsFollow return whether userId followed toUserId
+func QueryIsFollow(ctx context.Context, userId int64, toUserId int64) (bool, error) {
+	var relationFound *Relation
+
+	var resp bool
+
+	if err := DB.WithContext(ctx).Where("user_id = ? and to_user_id = ?", userId, toUserId).First(&relationFound).Error; err != nil {
+		resp = false
+		return resp, nil
+	}
+
+	resp = true
+
+	return resp, nil
+}
