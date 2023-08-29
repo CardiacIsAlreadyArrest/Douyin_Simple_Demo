@@ -43,7 +43,8 @@ const (
 	MaxVideoSize int64 = 128 * 1024 * 1024 // 可上传的单个视频大小最大为 128 MB
 	MaxFeedCount       = 30                // 视频列表最大视频个数
 
-	RelationTableName = "relations" // 关注关系表名
+	RelationTableName   = "relations" // 关注关系表名
+	RelationServiceName = "relation"
 )
 
 var (

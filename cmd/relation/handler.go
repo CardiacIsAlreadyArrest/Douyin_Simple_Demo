@@ -34,7 +34,7 @@ func (s *RelationServiceImpl) RelationAction(ctx context.Context, req *relation.
 }
 
 // RelationFollowList implements the RelationServiceImpl interface.
-func (s *RelationServiceImpl) RelationFollowList(ctx context.Context, req *relation.RelationFollowerListRequest) (resp *relation.RelationFollowListResponse, err error) {
+func (s *RelationServiceImpl) RelationFollowList(ctx context.Context, req *relation.RelationFollowListRequest) (resp *relation.RelationFollowListResponse, err error) {
 	resp = new(relation.RelationFollowListResponse)
 
 	invalidMsg := "invalid request"
@@ -48,7 +48,7 @@ func (s *RelationServiceImpl) RelationFollowList(ctx context.Context, req *relat
 	}
 
 	var followList []*relation.User
-	followList, err = service.NewRelationFollowerListService(ctx).RelationFollowerList(req)
+	followList, err = service.NewRelationFollowListService(ctx).RelationFollowList(req)
 	if err != nil {
 		resp.StatusCode = 1
 		resp.StatusMsg = &failMsg
@@ -114,6 +114,85 @@ func (s *RelationServiceImpl) RelationFriendList(ctx context.Context, req *relat
 	resp.StatusCode = 0
 	resp.StatusMsg = &successMsg
 	resp.UserList = users
+
+	return resp, nil
+}
+
+// RelationFollowCount implements the RelationServiceImpl interface.
+func (s *RelationServiceImpl) RelationFollowCount(ctx context.Context, req *relation.RelationFollowCountRequest) (resp *relation.RelationFollowCountResponse, err error) {
+	resp = new(relation.RelationFollowCountResponse)
+
+	invalidMsg := "Relation FollowCount request inValid"
+	failMsg := "Relation FollowCount fail"
+	successMsg := "Relation FollowCount success"
+	if req.UserId < 0 {
+		resp.StatusCode = -1
+		resp.StatusMsg = &invalidMsg
+		return resp, nil
+	}
+
+	followCount, err := service.NewRelationFollowCountService(ctx).RelationFollowCount(req)
+	if err != nil {
+		resp.StatusCode = 1
+		resp.StatusMsg = &failMsg
+		return resp, err
+	}
+
+	resp.StatusCode = 0
+	resp.StatusMsg = &successMsg
+	resp.FollowCount = followCount
+
+	return resp, nil
+}
+
+// RelationFollowerCount implements the RelationServiceImpl interface.
+func (s *RelationServiceImpl) RelationFollowerCount(ctx context.Context, req *relation.RelationFollowCountRequest) (resp *relation.RelationFollowCountResponse, err error) {
+	resp = new(relation.RelationFollowCountResponse)
+
+	inValidMsg := "Relation FollowerCount request inValid"
+	failMsg := "Relation FollowerCount fail"
+	successMsg := "Relation FollowerCount success"
+
+	if req.UserId < 0 {
+		resp.StatusCode = -1
+		resp.StatusMsg = &inValidMsg
+		return resp, nil
+	}
+
+	followerCount, err := service.NewRelationFollowerCountService(ctx).RelationFollowerCount(req)
+	if err != nil {
+		resp.StatusCode = 1
+		resp.StatusMsg = &failMsg
+		return resp, err
+	}
+
+	resp.StatusCode = 0
+	resp.StatusMsg = &successMsg
+	resp.FollowCount = followerCount
+
+	return resp, nil
+}
+
+// RelationIsFollow implements the RelationServiceImpl interface.
+func (s *RelationServiceImpl) RelationIsFollow(ctx context.Context, req *relation.RelationIsFollowRequest) (resp *relation.RelationIsFollowResponse, err error) {
+	resp = new(relation.RelationIsFollowResponse)
+
+	if req.UserId < 0 || req.ToUserId < 0 {
+		resp.StatusCode = -1
+		resp.StatusMsg = "Relation IsFollow request inValid"
+		return resp, nil
+	}
+
+	isFollow, err := service.NewRelationIsFollowService(ctx).RelationIsFollow(req)
+	if err != nil {
+		resp.StatusCode = 1
+		resp.StatusMsg = "Relation IsFollow fail"
+		return resp, err
+	}
+
+	resp.StatusCode = 0
+	resp.StatusMsg = "Relation isFollow success"
+	resp.IsFollow = isFollow
 
 	return resp, nil
 }
