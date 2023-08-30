@@ -31,19 +31,20 @@ const (
 	VideosTableName   = "videos"
 	FavoriteTableName = "favorite"
 
-
-	SecretKey   = "secret key"
-	IdentityKey = "user id"
+	SecretKey           = "secret key"
+	IdentityKey         = "user id"
 	FavoriteServiceName = "favorite"
-	UserServiceName    = "user"
-	PublishServiceName = "publish"
-	FeedServiceName    = "feed"
-
+	UserServiceName     = "user"
+	PublishServiceName  = "publish"
+	FeedServiceName     = "feed"
 
 	CPURateLimit float64 = 80.0
 
 	MaxVideoSize int64 = 128 * 1024 * 1024 // 可上传的单个视频大小最大为 128 MB
 	MaxFeedCount       = 30                // 视频列表最大视频个数
+
+	RelationTableName   = "relations" // 关注关系表名
+	RelationServiceName = "relation"
 )
 
 var (

@@ -3,7 +3,7 @@
 package relation
 
 import (
-	//relation "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/relation"
+	relation "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler/relation"
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -16,4 +16,36 @@ import (
 // Register register routes based on the IDL 'api.${HTTP Method}' annotation.
 func Register(r *server.Hertz) {
 
+	root := r.Group("/", rootMw()...)
+	{
+		_douyin := root.Group("/douyin", _douyinMw()...)
+		{
+			_relation := _douyin.Group("/relation", _relationMw()...)
+			{
+				_action := _relation.Group("/action", _actionMw()...)
+				_action.POST("/", append(_relationactionMw(), relation.RelationAction)...)
+			}
+			{
+				_follow := _relation.Group("/follow", _followMw()...)
+				{
+					_list := _follow.Group("/list", _listMw()...)
+					_list.GET("/", append(_relationfollowlistMw(), relation.RelationFollowList)...)
+				}
+			}
+			{
+				_follower := _relation.Group("/follower", _followerMw()...)
+				{
+					_list0 := _follower.Group("/list", _list0Mw()...)
+					_list0.GET("/", append(_relationfollowerlistMw(), relation.RelationFollowerList)...)
+				}
+			}
+			{
+				_friend := _relation.Group("/friend", _friendMw()...)
+				{
+					_list1 := _friend.Group("/list", _list1Mw()...)
+					_list1.GET("/", append(_relationfriendlistMw(), relation.RelationFriendList)...)
+				}
+			}
+		}
+	}
 }

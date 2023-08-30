@@ -16,6 +16,8 @@ type MessageChatRequest struct {
 	ToUserID int64 `thrift:"to_user_id,2" form:"to_user_id" json:"to_user_id" query:"to_user_id"`
 	// 上次最新消息的时间（新增字段-apk更新中）
 	PreMsgTime int64 `thrift:"pre_msg_time,3" form:"pre_msg_time" json:"pre_msg_time" query:"pre_msg_time"`
+	// 用户id
+	UserID int64 `thrift:"user_id,4" form:"user_id" json:"user_id" query:"user_id"`
 }
 
 func NewMessageChatRequest() *MessageChatRequest {
@@ -34,10 +36,15 @@ func (p *MessageChatRequest) GetPreMsgTime() (v int64) {
 	return p.PreMsgTime
 }
 
+func (p *MessageChatRequest) GetUserID() (v int64) {
+	return p.UserID
+}
+
 var fieldIDToName_MessageChatRequest = map[int16]string{
 	1: "token",
 	2: "to_user_id",
 	3: "pre_msg_time",
+	4: "user_id",
 }
 
 func (p *MessageChatRequest) Read(iprot thrift.TProtocol) (err error) {
@@ -82,6 +89,16 @@ func (p *MessageChatRequest) Read(iprot thrift.TProtocol) (err error) {
 		case 3:
 			if fieldTypeId == thrift.I64 {
 				if err = p.ReadField3(iprot); err != nil {
+					goto ReadFieldError
+				}
+			} else {
+				if err = iprot.Skip(fieldTypeId); err != nil {
+					goto SkipFieldError
+				}
+			}
+		case 4:
+			if fieldTypeId == thrift.I64 {
+				if err = p.ReadField4(iprot); err != nil {
 					goto ReadFieldError
 				}
 			} else {
@@ -146,6 +163,15 @@ func (p *MessageChatRequest) ReadField3(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *MessageChatRequest) ReadField4(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI64(); err != nil {
+		return err
+	} else {
+		p.UserID = v
+	}
+	return nil
+}
+
 func (p *MessageChatRequest) Write(oprot thrift.TProtocol) (err error) {
 	var fieldId int16
 	if err = oprot.WriteStructBegin("MessageChatRequest"); err != nil {
@@ -162,6 +188,10 @@ func (p *MessageChatRequest) Write(oprot thrift.TProtocol) (err error) {
 		}
 		if err = p.writeField3(oprot); err != nil {
 			fieldId = 3
+			goto WriteFieldError
+		}
+		if err = p.writeField4(oprot); err != nil {
+			fieldId = 4
 			goto WriteFieldError
 		}
 
@@ -232,6 +262,23 @@ WriteFieldBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 begin error: ", p), err)
 WriteFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T write field 3 end error: ", p), err)
+}
+
+func (p *MessageChatRequest) writeField4(oprot thrift.TProtocol) (err error) {
+	if err = oprot.WriteFieldBegin("user_id", thrift.I64, 4); err != nil {
+		goto WriteFieldBeginError
+	}
+	if err := oprot.WriteI64(p.UserID); err != nil {
+		return err
+	}
+	if err = oprot.WriteFieldEnd(); err != nil {
+		goto WriteFieldEndError
+	}
+	return nil
+WriteFieldBeginError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 begin error: ", p), err)
+WriteFieldEndError:
+	return thrift.PrependError(fmt.Sprintf("%T write field 4 end error: ", p), err)
 }
 
 func (p *MessageChatRequest) String() string {
