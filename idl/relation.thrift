@@ -1,9 +1,9 @@
 namespace go relation
 
 struct RelationActionRequest {
-    1: string token,              // 用户鉴权token
-    2: i64 to_user_id,            // 对方用户id
-    3: i32 action_type            // 1-关注，2-取消关注
+    1: string token     (api.query="token")              // 用户鉴权token
+    2: i64 to_user_id   (api.query="to_user_id")            // 对方用户id
+    3: i32 action_type  (api.query="action_type")            // 1-关注，2-取消关注
     4: i64 user_id                // 用户id
 }
 
@@ -13,8 +13,8 @@ struct RelationActionResponse {
 }
 
 struct RelationFollowListRequest {
-    1: i64 user_id,               // 用户id
-    2: string token               // 用户鉴权token
+    1: i64 user_id  (api.query="user_id")               // 用户id
+    2: string token (api.query="token")              // 用户鉴权token
     3: i64 m_user_id             // 目标用户id
 }
 
@@ -26,26 +26,38 @@ struct RelationFollowListResponse {
 
 }
 
+// 粉丝数
+struct RelationFollowerCountRequest {
+	1: i64 user_id
+}
+
+struct RelationFollowerCountResponse {
+    1: i32 status_code
+    2: string status_msg
+    3: i64 follower_count
+}
+
+
 struct RelationFollowerListRequest {
-    1: i64 user_id,               // 用户id
-    2: string token               // 用户鉴权token
+    1: i64 user_id  (api.query="user_id")               // 用户id
+    2: string token (api.query="token")               // 用户鉴权token
     3: i64 m_user_id             // 目标用户id
 }
 
 struct RelationFollowerListResponse {
-    1: i32 status_code,           // 状态码，0-成功，其他值-失败
+    1: i32 status_code    // 状态码，0-成功，其他值-失败
     2: optional string status_msg // 返回状态描述
     3: list<User> user_list       // 用户列表
 }
 
 struct RelationFriendListRequest {
-    1: i64 user_id,               // 用户id
-    2: string token               // 用户鉴权token
+    1: i64 user_id  (api.query="user_id")               // 用户id
+    2: string token (api.query="token")              // 用户鉴权token
     3: i64 m_user_id             // 目标用户id
 }
 
 struct RelationFriendListResponse {
-    1: i32 status_code,           // 状态码，0-成功，其他值-失败
+    1: i32 status_code           // 状态码，0-成功，其他值-失败
     2: optional string status_msg // 返回状态描述
     3: list<User> user_list // 用户列表
 }
@@ -94,11 +106,17 @@ struct FriendUser {
 
 service RelationService {
     // 关注操作
-    RelationActionResponse RelationAction(1: RelationActionRequest req)
+    RelationActionResponse RelationAction(1: RelationActionRequest req)(api.post="/douyin/relation/action/")
     // 获取关注列表
-    RelationFollowListResponse RelationFollowList(1: RelationFollowListRequest req)
+    RelationFollowListResponse RelationFollowList(1: RelationFollowListRequest req)(api.get="/douyin/relation/follow/list/")
     // 获取粉丝列表
-    RelationFollowerListResponse RelationFollowerList(1: RelationFollowerListRequest req)
+    RelationFollowerListResponse RelationFollowerList(1: RelationFollowerListRequest req)(api.get="/douyin/relation/follower/list/")
     // 获取好友列表
-	RelationFriendListResponse RelationFriendList(1:RelationFriendListRequest req)
+	RelationFriendListResponse RelationFriendList(1:RelationFriendListRequest req)(api.get="/douyin/relation/friend/list/")
+	// 获取关注数
+	RelationFollowCountResponse RelationFollowCount(1:RelationFollowCountRequest req)
+     // 获取粉丝数
+    RelationFollowerCountResponse RelationFollowerCount(1:RelationFollowerCountRequest req)
+    // 是否关注
+    RelationIsFollowResponse RelationIsFollow(1:RelationIsFollowRequest req)
 }
