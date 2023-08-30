@@ -77,6 +77,7 @@ func RelationFollowerList(ctx context.Context, req *relation.RelationFollowerLis
 }
 
 // RelationFriendList 获取好友列表【rpc 客户端】
+
 func RelationFriendList(ctx context.Context, req *relation.RelationFriendListRequest) (*relation.RelationFriendListResponse, error) {
 	resp, err := relationClient.RelationFriendList(ctx, req)
 	if err != nil {

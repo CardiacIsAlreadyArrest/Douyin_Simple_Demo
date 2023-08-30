@@ -2,9 +2,156 @@
 
 package relation
 
-//import (
-//	"context"
-//
-//	"github.com/cloudwego/hertz/pkg/app"
-//	"github.com/cloudwego/hertz/pkg/protocol/consts"
-//)
+import (
+	"context"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/handler"
+	api "github.com/Yra-A/Douyin_Simple_Demo/cmd/api/biz/model/relation"
+	"github.com/Yra-A/Douyin_Simple_Demo/cmd/api/rpc"
+	"github.com/Yra-A/Douyin_Simple_Demo/kitex_gen/relation"
+	"github.com/Yra-A/Douyin_Simple_Demo/pkg/constants"
+	"github.com/Yra-A/Douyin_Simple_Demo/pkg/errno"
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/protocol/consts"
+	"log"
+)
+
+// RelationAction .
+// @router /douyin/relation/action/ [POST]
+func RelationAction(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.RelationActionRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		log.Println("[debug] request BindAndValidate error")
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(api.RelationActionResponse)
+
+	log.Println("[ypx debug] req checked finished, prepare to rpc")
+
+	v, _ := c.Get(constants.IdentityKey)
+	relations, err := rpc.RelationAction(context.Background(), &relation.RelationActionRequest{
+		UserId:     v.(*api.User).ID,
+		ToUserId:   req.ToUserID,
+		ActionType: req.ActionType,
+	})
+	if err != nil {
+		log.Println("[debug] rpc RelationAction error", err.Error())
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	if err != nil {
+		handler.BadResponse(c, errno.ConvertErr(err))
+		return
+	}
+
+	resp = &api.RelationActionResponse{
+		StatusCode: relations.StatusCode,
+		StatusMsg:  relations.StatusMsg,
+	}
+
+	handler.SendResponse(c, resp)
+}
+
+// RelationFollowList .
+// @router /douyin/relation/follow/list/ [GET]
+func RelationFollowList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.RelationFollowListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		log.Println("[debug] request BindAndValidate error")
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(api.RelationFollowListResponse)
+
+	v, _ := c.Get(constants.IdentityKey)
+	relations, err := rpc.RelationFollowList(context.Background(), &relation.RelationFollowListRequest{
+		UserId:  req.UserID,
+		MUserId: v.(*api.User).ID,
+	})
+	if err != nil {
+		handler.BadResponse(c, errno.ConvertErr(err))
+		return
+	}
+
+	resp = &api.RelationFollowListResponse{
+		StatusCode: relations.StatusCode,
+		StatusMsg:  relations.StatusMsg,
+	}
+
+	handler.SendResponse(c, resp)
+
+}
+
+// RelationFollowerList .
+// @router /douyin/relation/follower/list/ [GET]
+func RelationFollowerList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.RelationFollowerListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		log.Println("[debug] request BindAndValidate error")
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(api.RelationFollowerListResponse)
+
+	v, _ := c.Get(constants.IdentityKey)
+	relations, err := rpc.RelationFollowerList(context.Background(), &relation.RelationFollowerListRequest{
+		UserId:  req.UserID,
+		MUserId: v.(*api.User).ID,
+	})
+
+	if err != nil {
+		handler.BadResponse(c, errno.ConvertErr(err))
+		return
+	}
+
+	resp = &api.RelationFollowerListResponse{
+		StatusCode: relations.StatusCode,
+		StatusMsg:  relations.StatusMsg,
+	}
+
+	handler.SendResponse(c, resp)
+}
+
+// RelationFriendList .
+// @router /douyin/relation/friend/list/ [GET]
+func RelationFriendList(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.RelationFriendListRequest
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		log.Println("[debug] request BindAndValidate error")
+		c.String(consts.StatusBadRequest, err.Error())
+		return
+	}
+
+	resp := new(api.RelationFriendListResponse)
+
+	v, _ := c.Get(constants.IdentityKey)
+	_, err = rpc.RelationFriendList(context.Background(), &relation.RelationFriendListRequest{
+		UserId:  req.UserID,
+		MUserId: v.(*api.User).ID,
+	})
+
+	if err != nil {
+		handler.BadResponse(c, errno.ConvertErr(err))
+		return
+	}
+
+	//resp = &api.RelationFriendListResponse{
+	//
+	//	StatusCode: relations.StatusCode,
+	//	StatusMsg:  relations.StatusMsg,
+	//}
+
+	handler.SendResponse(c, resp)
+}
